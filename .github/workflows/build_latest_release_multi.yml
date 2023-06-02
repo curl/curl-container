@@ -1,0 +1,118 @@
+name: build_latest_release_multi_images
+on:
+  push:
+    branches:
+    - main
+env:
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ github.token }}
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+
+jobs:
+  build_multi_latest_release_tag:
+    name: ${{ matrix.build.name }}
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        install_latest: [ true ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: "new_world"
+      - name: Log in to ghcr.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+      - run: |
+          sudo apt-get update
+          sudo apt-get -y install buildah less git make podman qemu
+        name: 'install dev deps'
+      - name: Sets env vars
+        run: |
+          release_tag_redirect=$(curl -s https://github.com/curl/curl/releases/latest -w'%{redirect_url}\n' -o /dev/null)
+          latest_release_ref=$(basename ${release_tag_redirect})
+          echo "TAG_REF=$latest_release_ref" >> $GITHUB_ENV
+          rel=${latest_release_ref:5}
+          release_image_tag="${rel//_/.}"
+          echo "REL=$release_image_tag" >> $GITHUB_ENV
+      - run: buildah unshare make branch_or_ref=$TAG_REF release_tag=$REL multibuild
+        name: 'build multi image'
+#      - run: buildah unshare make dist_name=curl-multi release_tag=master test
+#        name: 'test image'
+#      - run: make dist_name=curl-multi release_tag=$REL scan
+#        name: 'security scan image'
+      - run: |
+          buildah manifest push --all curl-base-multi:$REL "docker://ghcr.io/curl/curl-container/curl-multi:${REL}"
+          buildah manifest push --all curl-multi:$REL "docker://ghcr.io/curl/curl-container/curl:${REL}"
+        name: 'push images to github registry'
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+      - name: Write signing key to disk (only needed for `cosign sign --key`)
+        run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+      - name: Sign images with sigstore key
+        run: |
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-multi:$REL
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-base-multi:$REL
+        env:
+          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+      - name: Write public key to disk
+        run: echo "${{ secrets.COSIGN_PUBLIC_KEY }}" > cosign.pub
+      - name: Verify image with public key
+        run: |
+          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:$REL
+          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base-multi:$REL
+      - name: "login docker hub"
+        run: |
+          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
+          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
+      - name: 'push release to docker hub'
+        run: |
+          buildah manifest push --all localhost/curl-multi:$REL "docker://docker.io/curlimages/curl:${REL}"
+          buildah manifest push --all localhost/curl-multi:$REL "docker://docker.io/curlimages/curl:latest"
+          buildah manifest push --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:${REL}"
+          buildah manifest push --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:latest"
+      - name: Sign images with a sigstore key
+        run: |
+          cosign sign -y --key cosign.key docker.io/curlimages/curl:$REL
+          cosign sign -y --key cosign.key docker.io/curlimages/curl:latest
+          cosign sign -y --key cosign.key docker.io/curlimages/curl-base:$REL
+          cosign sign -y --key cosign.key docker.io/curlimages/curl-base:latest
+        env:
+          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+      - name: Verify image
+        run: |
+          cosign verify --key cosign.pub docker.io/curlimages/curl:$REL
+          cosign verify --key cosign.pub docker.io/curlimages/curl:latest
+          cosign verify --key cosign.pub docker.io/curlimages/curl-base:$REL
+          cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
+      - name: "login quay.io"
+        run: |
+          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
+          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
+      - name: 'push release to quay.io'
+        run: |
+          buildah manifest push --all localhost/curl-multi:$REL "docker://quay.io/curl/curl:${REL}"
+          buildah manifest push --all localhost/curl-multi:$REL "docker://quay.io/curl/curl:latest"
+          buildah manifest push --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:${REL}"
+          buildah manifest push --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:latest"
+      - name: Sign images with a sigstore key
+        run: |
+          cosign sign -y --key cosign.key quay.io/curl/curl:$REL
+          cosign sign -y --key cosign.key quay.io/curl/curl:latest
+          cosign sign -y --key cosign.key quay.io/curl/curl-base:$REL
+          cosign sign -y --key cosign.key quay.io/curl/curl-base:latest
+        env:
+          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+      - name: Verify image
+        run: |
+          cosign verify --key cosign.pub quay.io/curl/curl:$REL
+          cosign verify --key cosign.pub quay.io/curl/curl:latest
+          cosign verify --key cosign.pub quay.io/curl/curl-base:$REL
+          cosign verify --key cosign.pub quay.io/curl/curl-base:latest
