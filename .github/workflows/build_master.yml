@@ -1,0 +1,74 @@
+name: build_master_images
+on:
+  schedule:
+    # Runs every hour
+    - cron: '0 * * * * '
+  push:
+    branches:
+    - main
+    - '*/ci'
+  pull_request:
+    branches:
+    - main
+
+env:
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ github.token }}
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+
+jobs:
+  build_master:
+    name: ${{ matrix.build.name }}
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        install_latest: [ true ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: "new_world"
+      - name: Log in to ghcr.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+      - run: |
+          sudo apt-get update
+          sudo apt-get -y install buildah less git make podman qemu
+        name: 'install dev deps'
+      - run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
+        name: 'build master images'
+#      - run: buildah unshare make dist_name=curl release_tag=master test
+#        name: 'test image'
+      - run: make dist_name=localhost/curl release_tag=master scan
+        name: 'security scan image'
+      - run: |
+          buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
+          buildah push curl-base:master "docker://ghcr.io/curl/curl-container/curl-base:master"
+          buildah push curl:master "docker://ghcr.io/curl/curl-container/curl:master"
+        name: 'push images to github registry'
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+      - name: Write signing key to disk (only needed for `cosign sign --key`)
+        run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+      - name: Sign image with a key
+        run: |
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev:master
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-base:master
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl:master
+        env:
+          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+      - name: Write public key to disk
+        run: echo "${{ secrets.COSIGN_PUBLIC_KEY }}" > cosign.pub
+      - name: Verify image with public key
+        run: |
+          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev:master
+          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base:master
+          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl:master
+
