@@ -1,8 +1,8 @@
 name: build_latest_release_multi_images
 on:
   push:
-    branches:
-    - main
+    tags:
+      - '*'
 env:
   REGISTRY_USER: ${{ github.actor }}
   REGISTRY_PASSWORD: ${{ github.token }}
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          ref: "new_world"
+          tag_name: ${{ github.ref }}
       - name: Log in to ghcr.io
         uses: redhat-actions/podman-login@v1
         with:

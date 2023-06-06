@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- enhanced CI jobs
+
 ## [8.1.2] - 2023-06-06
 ### Added
 - created [curl-container repo](https://github.com/curl/curl-container/pull/1)
