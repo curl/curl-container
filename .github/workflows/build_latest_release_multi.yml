@@ -49,8 +49,8 @@ jobs:
 #      - run: make dist_name=curl-multi release_tag=$REL scan
 #        name: 'security scan image'
       - run: |
-          buildah manifest push --all curl-base-multi:$REL "docker://ghcr.io/curl/curl-container/curl-multi:${REL}"
-          buildah manifest push --all curl-multi:$REL "docker://ghcr.io/curl/curl-container/curl:${REL}"
+          buildah manifest push --all curl-multi:$REL "docker://ghcr.io/curl/curl-container/curl-multi:${REL}"
+          buildah manifest push --all curl-base-multi:$REL "docker://ghcr.io/curl/curl-container/curl-base-multi:${REL}"
         name: 'push images to github registry'
       - name: Install Cosign
         uses: sigstore/cosign-installer@main
