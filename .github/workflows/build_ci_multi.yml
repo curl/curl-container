@@ -21,6 +21,14 @@ jobs:
       matrix:
         install_latest: [ true ]
     steps:
+      - name: "login docker hub"
+        run: |
+          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
+          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
+      - name: "login quay.io"
+        run: |
+          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
+          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
       - name: Checkout repository
         uses: actions/checkout@v3
       - run: |
@@ -31,5 +39,5 @@ jobs:
         name: 'build multi image'
       - run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
         name: 'test image'
-#      - run: make dist_name=curl-multi release_tag=master scan
-#        name: 'security scan image'
+      - run: make dist_name=localhost/curl-multi release_tag=master scan
+        name: 'security scan image'

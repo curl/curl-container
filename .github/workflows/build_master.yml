@@ -34,6 +34,14 @@ jobs:
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
           registry: ${{ env.IMAGE_REGISTRY }}
+      - name: "login docker hub"
+        run: |
+          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
+          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
+      - name: "login quay.io"
+        run: |
+          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
+          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
       - run: |
           sudo apt-get update
           sudo apt-get -y install buildah less git make podman qemu

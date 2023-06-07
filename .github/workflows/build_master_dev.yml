@@ -1,19 +1,18 @@
-name: build_master_multi_images
+name: build_dev_master_images
 on:
   schedule:
-    # Runs every hour
-    - cron: '0 * * * * '
+    # Runs every day
+    - cron: '30 2 * * * '
   push:
     branches:
     - main
-
 env:
   REGISTRY_USER: ${{ github.actor }}
   REGISTRY_PASSWORD: ${{ github.token }}
   IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
-  build_multi_master:
+  build_dev_master:
     name: ${{ matrix.build.name }}
     runs-on: 'ubuntu-latest'
     permissions:
@@ -46,29 +45,45 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install buildah less git make podman qemu
         name: 'install dev deps'
-      - run: buildah unshare make branch_or_ref=master release_tag=master multibuild
-        name: 'build multi image'
-      - run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
-        name: 'test image'
-#      - run: make dist_name=curl-multi release_tag=$REL scan
-#        name: 'security scan image'
+      - run: buildah unshare make branch_or_ref=master release_tag=master build_debian
+        name: 'build debian dev image'
+      - run: make dist_name=localhost/curl-dev-debian release_tag=master scan
+        name: 'security scan debian image'
       - run: |
-          buildah manifest push --all localhost/curl-base-multi:master "docker://ghcr.io/curl/curl-container/curl-base-multi:master"
-          buildah manifest push --all localhost/curl-multi:master "docker://ghcr.io/curl/curl-container/curl-multi:master"
-        name: 'push multi images to github registry'
+          buildah push curl-dev-debian:master "docker://ghcr.io/curl/curl-container/curl-dev-debian:master"
+        name: 'push images to github registry'
       - name: Install Cosign
         uses: sigstore/cosign-installer@main
       - name: Write signing key to disk (only needed for `cosign sign --key`)
         run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
       - name: Sign image with a key
         run: |
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-multi:master
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-base-multi:master
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-debian:master
         env:
           COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
       - name: Write public key to disk
         run: echo "${{ secrets.COSIGN_PUBLIC_KEY }}" > cosign.pub
       - name: Verify image with public key
         run: |
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:master
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base-multi:master
+          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-debian:master
+      - run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
+        name: 'build fedora dev image'
+      - run: make dist_name=localhost/curl-dev-fedora release_tag=master scan
+        name: 'security scan fedora image'
+      - run: |
+          buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
+        name: 'push images to github registry'
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@main
+      - name: Write signing key to disk (only needed for `cosign sign --key`)
+        run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+      - name: Sign image with a key
+        run: |
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-fedora:master
+        env:
+          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
+      - name: Write public key to disk
+        run: echo "${{ secrets.COSIGN_PUBLIC_KEY }}" > cosign.pub
+      - name: Verify image with public key
+        run: |
+          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-fedora:master
