@@ -53,18 +53,21 @@ A set of special case images built regularly:
 * **curl-exp:master** - curl **master** branch built enabling expiremental features
 
 Platform specific dev images built daily:
-* **curl-dev-alpine:master** - alpine based development environment
+* **curl-dev:master** - alpine based development environment
 * **curl-dev-debian:master** - debian based development environment
 * **curl-dev-fedora:master** - fedora based development environment
 
 To use any of these development images; 
 ```
-> {docker|podman} run -v /src/my-curl-src:/src/curl curl/curl-dev-alpine:latest /bin/sh
+> podman run -it -v /Users/exampleuser/src/curl:/src/curl  ghcr.io/curl/curl-container/curl-dev-debian:master zsh
 $> cd /src/curl
 $> ./buildconf
-$> ./configure --with-openssl
+$> ./configure
 $> make
 ```
+
+**Note**- dev images are not specifically scanned for vulnerabilities and we currently _pin_ to latest which 
+always has vulns ... **use at your own risk**. Perhaps we could consider _pinning_ to a later 'vintage'.
 
 ## Dependencies
 
@@ -87,4 +90,5 @@ Curl images roughly match curl own release schedule where the process is roughly
 * update CHANGELOG
 * raise prep PR, review and merge
 * create new release with new tag based on previously created branch
+* new tag will trigger CI for publishing to quay/docker
 

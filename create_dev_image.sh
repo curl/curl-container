@@ -35,7 +35,7 @@ fi
 
 # label/env
 buildah config --label maintainer="James Fuller <jim.fuller@webcomposite.com>" $bdr
-buildah config --label name="${IMAGE_NAME_DEFAULT}" $bdr
+buildah config --label name="${image_name}" $bdr
 
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
@@ -44,18 +44,20 @@ if [[ "$dist" =~ .*"alpine".* ]]; then
 fi
 if [[ "$dist" =~ .*"fedora".* ]]; then
   package_manage_update="dnf update upgrade"
-  package_manage_add="dnf add"
+  package_manage_add="dnf -y install"
 fi
 if [[ "$dist" =~ .*"debian".* ]]; then
-  package_manage_update="deb update upgrade"
-  package_manage_add="deb add"
+  package_manage_update="apt-get update"
+  package_manage_add="apt-get -y install "
 fi
 
+echo ${package_manage_update}
 
 # install deps using specific dist package manager
 echo $install_deps
 buildah run $bdr ${package_manage_update}
 buildah run $bdr ${package_manage_add} ${deps}
+echo "her."
 
 # setup curl source derived from branch or tag
 echo "get curl source"

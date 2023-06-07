@@ -30,6 +30,14 @@ jobs:
           username: ${{ env.REGISTRY_USER }}
           password: ${{ env.REGISTRY_PASSWORD }}
           registry: ${{ env.IMAGE_REGISTRY }}
+      - name: "login docker hub"
+        run: |
+          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
+          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
+      - name: "login quay.io"
+        run: |
+          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
+          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
       - run: |
           sudo apt-get update
           sudo apt-get -y install buildah less git make podman qemu
@@ -68,10 +76,6 @@ jobs:
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:$REL
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base-multi:$REL
-      - name: "login docker hub"
-        run: |
-          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
-          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
       - name: 'push release to docker hub'
         run: |
           buildah manifest push --all localhost/curl-multi:$REL "docker://docker.io/curlimages/curl:${REL}"
@@ -92,10 +96,6 @@ jobs:
           cosign verify --key cosign.pub docker.io/curlimages/curl:latest
           cosign verify --key cosign.pub docker.io/curlimages/curl-base:$REL
           cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
-      - name: "login quay.io"
-        run: |
-          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
-          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
       - name: 'push release to quay.io'
         run: |
           buildah manifest push --all localhost/curl-multi:$REL "docker://quay.io/curl/curl:${REL}"

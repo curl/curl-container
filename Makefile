@@ -3,11 +3,13 @@
 container_ids=`buildah ls --format "{{.ContainerID}}"`
 
 # default setttings for official curl images
+debian_base=docker.io/debian
+fedora_base=docker.io/fedora
 base=docker.io/alpine:3.18.0
 arch=""
 compiler="gcc"
 build_opts=" --enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr"
-dev_deps="libssh2 libssh2-dev libssh2-static autoconf automake build-base groff openssl curl-dev python3 python3-dev libtool curl stunnel perl nghttp2 brotli brotli-dev"
+dev_deps="git zsh libssh2 libssh2-dev libssh2-static autoconf automake build-base groff openssl curl-dev python3 python3-dev libtool curl stunnel perl nghttp2 brotli brotli-dev"
 base_deps="brotli brotli-dev libssh2 nghttp2-dev libidn2"
 
 ##############################################
@@ -17,7 +19,16 @@ base_deps="brotli brotli-dev libssh2 nghttp2-dev libidn2"
 #  > make branch_or_ref=master release_tag=master build_debian
 #
 build_debian:
-	./create_dev_image.sh ${arch} docker/debian:latest ${compiler} ${dev_deps} ${build_opts} ${branch_or_ref} curl-dev-debian:${release_tag}
+	./create_dev_image.sh ${arch} ${debian_base} ${compiler} "git zsh libssh2-1 libssh2-1-dev autoconf automake build-essential groff libcurl4-openssl-dev python3 python3-dev libtool curl stunnel perl nghttp2 brotli libssl-dev" " --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr" ${branch_or_ref} curl-dev-debian:${release_tag}
+
+##############################################
+# fedora dev image
+##############################################
+#
+#  > make branch_or_ref=master release_tag=master build_fedora
+#
+build_fedora:
+	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} "gcc cargo zsh git openssl-devel python3 python3-devel python3-pip libtool curl stunnel perl nghttp2 brotli" " --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr" ${branch_or_ref} curl-dev-fedora:${release_tag}
 
 ##############################################
 # build_alpine dev, base and appliance image
