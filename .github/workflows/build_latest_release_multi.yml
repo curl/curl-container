@@ -44,8 +44,8 @@ jobs:
           echo "REL=$release_image_tag" >> $GITHUB_ENV
       - run: buildah unshare make branch_or_ref=$TAG_REF release_tag=$REL multibuild
         name: 'build multi image'
-#      - run: buildah unshare make dist_name=curl-multi release_tag=master test
-#        name: 'test image'
+      - run: buildah unshare make dist_name=localhost/curl-multi release_tag=$REL test
+        name: 'test image'
 #      - run: make dist_name=curl-multi release_tag=$REL scan
 #        name: 'security scan image'
       - run: |
