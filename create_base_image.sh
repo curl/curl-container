@@ -92,7 +92,7 @@ buildah run $ctr adduser -S curl_user -G curl_group
 
 # set entrypoint
 buildah config --cmd curl $ctr
-buildah copy --chmod 700 $ctr etc/entrypoint.sh /entrypoint.sh
+buildah copy --chmod 700 --chown curl_user:curl_group $ctr etc/entrypoint.sh /entrypoint.sh
 buildah run $ctr RUN chmod a+rx /entrypoint.sh
 buildah config --entrypoint '["/entrypoint.sh"]' $ctr
 
