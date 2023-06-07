@@ -86,13 +86,14 @@ buildah run $ctr ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl.so
 buildah run $ctr curl https://curl.se/ca/cacert.pem -L -o /cacert.pem
 buildah config --env CURL_CA_BUNDLE="/cacert.pem" $ctr
 
-# setup curl_group and curl_user though it is not used
+# setup curl_group and curl_user though it is not used directly in this image
 buildah run $ctr addgroup -S curl_group
 buildah run $ctr adduser -S curl_user -G curl_group
 
 # set entrypoint
 buildah config --cmd curl $ctr
-buildah copy --chmod 700 --chown curl_user:curl_group $ctr etc/entrypoint.sh /entrypoint.sh
+buildah copy --chmod 700 $ctr etc/entrypoint.sh /entrypoint.sh
+buildah run $ctr RUN chmod a+rx /entrypoint.sh
 buildah config --entrypoint '["/entrypoint.sh"]' $ctr
 
 # label image
