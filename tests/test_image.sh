@@ -20,7 +20,7 @@ dist=${1}
 branch_or_tag=${2}
 
 # create and mount image
-ctr=$(buildah from curl:${branch_or_tag})
+ctr=$(buildah from ${dist}:${branch_or_tag})
 ctrmnt=$(buildah mount $ctr)
 
 # check file exists

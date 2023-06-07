@@ -89,6 +89,7 @@ buildah config --env CURL_CA_BUNDLE="/cacert.pem" $ctr
 # setup curl_group and curl_user though it is not used
 buildah run $ctr addgroup -S curl_group
 buildah run $ctr adduser -S curl_user -G curl_group
+unable to find user curl_user: no matching entries in passwd file
 
 # set entrypoint
 buildah config --cmd curl $ctr

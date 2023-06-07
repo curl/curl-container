@@ -1,0 +1,35 @@
+name: build_ci_multi_images
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, labeled, unlabeled ]
+    branches:
+      - main
+env:
+  REGISTRY_USER: ${{ github.actor }}
+  REGISTRY_PASSWORD: ${{ github.token }}
+  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+
+jobs:
+  build_multi_ci:
+    name: ${{ matrix.build.name }}
+    runs-on: 'ubuntu-latest'
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        install_latest: [ true ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - run: |
+          sudo apt-get update
+          sudo apt-get -y install buildah less git make podman qemu
+        name: 'install dev deps'
+      - run: buildah unshare make branch_or_ref=master release_tag=master multibuild
+        name: 'build multi image'
+      - run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
+        name: 'test image'
+#      - run: make dist_name=curl-multi release_tag=$REL scan
+#        name: 'security scan image'
