@@ -20,9 +20,7 @@ branch_or_ref=${6}
 release_tag=${7}
 
 echo "####### creating curl multi image."
-buildah manifest rm curl-base-multi:${release_tag} || true
 buildah manifest create curl-base-multi:${release_tag}
-buildah manifest rm curl-multi:${release_tag} || true
 buildah manifest create curl-multi:${release_tag}
 
 # loop through supported arches
