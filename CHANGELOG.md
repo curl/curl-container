@@ -5,13 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [8.1.2-2] - 2023-06-08
 ### Added 
 - curl-dev-fedora:master
 - curl-dev-debian:master
-
 ### Changed
 - fixed issue #12 by using oci format when pushing manifests
 - reduce cron CI jobs to daily
+- temporarily remove arm64 arch from multiarch builds
 
 ## [8.1.2-1] - 2023-06-07
 ### Changed
