@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - curl-dev-fedora:master
 - curl-dev-debian:master
 
+### Changed
+- fixed issue #12 by using oci format when pushing manifests
+- reduce cron CI jobs to daily
+
 ## [8.1.2-1] - 2023-06-07
 ### Changed
 - fixed and enhanced CI jobs
