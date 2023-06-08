@@ -57,8 +57,8 @@ jobs:
 #      - run: make dist_name=curl-multi release_tag=$REL scan
 #        name: 'security scan image'
       - run: |
-          buildah manifest push --all curl-multi:$REL "docker://ghcr.io/curl/curl-container/curl-multi:${REL}"
-          buildah manifest push --all curl-base-multi:$REL "docker://ghcr.io/curl/curl-container/curl-base-multi:${REL}"
+          buildah manifest push --format oci --all curl-multi:$REL "docker://ghcr.io/curl/curl-container/curl-multi:${REL}"
+          buildah manifest push --format oci --all curl-base-multi:$REL "docker://ghcr.io/curl/curl-container/curl-base-multi:${REL}"
         name: 'push images to github registry'
       - name: Install Cosign
         uses: sigstore/cosign-installer@main
@@ -78,10 +78,10 @@ jobs:
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base-multi:$REL
       - name: 'push release to docker hub'
         run: |
-          buildah manifest push --all localhost/curl-multi:$REL "docker://docker.io/curlimages/curl:${REL}"
-          buildah manifest push --all localhost/curl-multi:$REL "docker://docker.io/curlimages/curl:latest"
-          buildah manifest push --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:${REL}"
-          buildah manifest push --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:latest"
+          buildah manifest push --format oci --all localhost/curl-multi:$REL "docker://docker.io/curlimages/curl:${REL}"
+          buildah manifest push --format oci --all localhost/curl-multi:$REL "docker://docker.io/curlimages/curl:latest"
+          buildah manifest push --format oci --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:${REL}"
+          buildah manifest push --format oci --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:latest"
       - name: Sign images with a sigstore key
         run: |
           cosign sign -y --key cosign.key docker.io/curlimages/curl:$REL
@@ -98,10 +98,10 @@ jobs:
           cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
       - name: 'push release to quay.io'
         run: |
-          buildah manifest push --all localhost/curl-multi:$REL "docker://quay.io/curl/curl:${REL}"
-          buildah manifest push --all localhost/curl-multi:$REL "docker://quay.io/curl/curl:latest"
-          buildah manifest push --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:${REL}"
-          buildah manifest push --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:latest"
+          buildah manifest push --format oci --all localhost/curl-multi:$REL "docker://quay.io/curl/curl:${REL}"
+          buildah manifest push --format oci --all localhost/curl-multi:$REL "docker://quay.io/curl/curl:latest"
+          buildah manifest push --format oci --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:${REL}"
+          buildah manifest push --format oci --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:latest"
       - name: Sign images with a sigstore key
         run: |
           cosign sign -y --key cosign.key quay.io/curl/curl:$REL
