@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.1.2-4] - 2023-06-08
+### Changed
+- fixed issue #12 by using oci format when pushing manifests V2s2
+
 ## [8.1.2-3] - 2023-06-08
 ### Changed
 - fixed issue #12 by using oci format when pushing manifests V2s1
