@@ -92,8 +92,10 @@ buildah run $ctr adduser -S curl_user -G curl_group
 
 # set entrypoint
 buildah config --cmd curl $ctr
-buildah copy --chmod 700 --chown curl_user:curl_group $ctr etc/entrypoint.sh /entrypoint.sh
-buildah run $ctr RUN chmod a+rx /entrypoint.sh
+buildah copy --chmod 755 --chown curl_user:curl_group $ctr etc/entrypoint.sh /entrypoint.sh
+#buildah run $ctr run chgrp -R 0 /entrypoint.sh
+#buildah run $ctr run chmod -R g+rwX /entrypoint.sh
+
 buildah config --entrypoint '["/entrypoint.sh"]' $ctr
 
 # label image
