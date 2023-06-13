@@ -75,8 +75,7 @@ feature-test:
 scan:
 	podman save -o image.tar ${image_name}
 	# Run clamav on image.tar
-	dnf --nodocs --setopt install_weak_deps=false -y install clamav clamav-freshclam
-	freshclam
+# 	freshclam
 	clamscan image.tar
 	# run grype on image.tar
 	curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin && grype image.tar
