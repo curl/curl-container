@@ -39,7 +39,7 @@ buildah config --label name="${image_name}" $bdr
 
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
-  package_manage_update="apk update upgrade"
+  package_manage_update="apk upgrade"
   package_manage_add="apk add "
 fi
 if [[ "$dist" =~ .*"fedora".* ]]; then
@@ -51,13 +51,10 @@ if [[ "$dist" =~ .*"debian".* ]]; then
   package_manage_add="apt-get -y install "
 fi
 
-echo ${package_manage_update}
 
 # install deps using specific dist package manager
-echo $install_deps
 buildah run $bdr ${package_manage_update}
 buildah run $bdr ${package_manage_add} ${deps}
-echo "her."
 
 # setup curl source derived from branch or tag
 echo "get curl source"
