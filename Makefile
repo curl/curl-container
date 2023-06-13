@@ -8,9 +8,9 @@ fedora_base=docker.io/fedora
 base=docker.io/alpine:3.18.0
 arch=""
 compiler="gcc"
-build_opts=" --enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr"
-dev_deps="git zsh libssh2 libssh2-dev libssh2-static autoconf automake build-base groff openssl curl-dev python3 python3-dev libtool curl stunnel perl nghttp2 brotli brotli-dev"
-base_deps="brotli brotli-dev libssh2 nghttp2-dev libidn2"
+build_opts=" --enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr --with-krb5"
+dev_deps="git zsh libssh2 libssh2-dev libssh2-static autoconf automake build-base groff openssl curl-dev python3 python3-dev libtool curl stunnel perl nghttp2 brotli brotli-dev krb5-dev"
+base_deps="brotli brotli-dev libssh2 nghttp2-dev libidn2 krb5"
 
 ##############################################
 # debian dev image
@@ -52,18 +52,40 @@ build_ref_images: build_alpine
 test:
 	tests/test_image.sh ${dist_name} ${release_tag}
 
+
+#############################
+# feature test
+#############################
+#
+# Runs nascent behave feature tests
+#
+#  > make feature-test
+#
+feature-test:
+	behave tests
+
 #############################
 # scan
 #############################
 #
-#  > make dist_name=curl release_tag=master scan
+# Runs clamav, grype and trivy against image
+#
+#  > make image_name=localhost/curl:master scan
 #
 scan:
-	systemctl --user enable --now podman.socket
+	podman save -o image.tar ${image_name}
+	# Run clamav on image.tar
+	dnf --nodocs --setopt install_weak_deps=false -y install clamav clamav-freshclam
+	freshclam
+	clamscan image.tar
+	# run grype on image.tar
+	curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin && grype image.tar
+	# run trivy on image.tar
+	systemctl --user enable --now podman.socket | true
 	curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo bash -s -- -b /usr/local/bin v0.32.0
-	trivy image ${dist_name}:${release_tag}
-# 	wget -qO - https://raw.githubusercontent.com/anchore/grype/main/install.sh | sudo bash -s -- -b /usr/local/bin
-# 	grype ${dist_name}:${release_tag}
+	trivy image --input image.tar
+	rm image.tar
+
 
 #############################
 # multibuild
@@ -82,16 +104,5 @@ multibuild:
 #
 clean:
 	buildah rm $(container_ids)
-run_curl_dev_master:
-	# assumes git checkout of curl at ../curl
-	podman run --privileged -it -v /opt/app-root/curl:/src/curl:z localhost/curl-dev:master
-run_curl_base_master:
-	# assumes git checkout of curl at ../curl
-	podman run -it -v ../curl:/src/curl:z localhost/curl-base:master
-run_curl_master:
-	# assumes git checkout of curl at ../curl
-	podman run -it -v ../curl:/src/curl:z localhost/curl:master
-
 dev:
 	podman-compose -f dev-compose.yml up
-
