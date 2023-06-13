@@ -3,7 +3,7 @@
 [![build_master_multi_images](https://github.com/curl/curl-container/actions/workflows/build_master_multi.yml/badge.svg)](https://github.com/curl/curl-container/actions/workflows/build_master_multi.yml) 
 [![build_latest_release_multi_images](https://github.com/curl/curl-container/actions/workflows/build_latest_release_multi.yml/badge.svg)](https://github.com/curl/curl-container/actions/workflows/build_latest_release_multi.yml)
 
-This repository contains infrastructure code that generates, tests and distributes the Official curl docker images 
+This repository contains infrastructure/code that generates, tests and distributes the Official curl docker images 
 available from the following registries:
 * [quay.io](https://quay.io/curl/curl): curl images distributed by Quay.io
 * [docker.io](https://hub.docker.com/repository/docker/curlimages/curl): curl images distributed by docker.io
@@ -11,11 +11,11 @@ available from the following registries:
 
 To pull an image:
 ```
-> {docker|podman} pull quay.io/curl/curl:latest
+> podman pull quay.io/curl/curl:latest
 ```
 To run an image:
 ```
-> {docker|podman} run -it quay.io/curl/curl:latest -V
+> podman run -it quay.io/curl/curl:latest -V
 ```
 
 To use base image:
@@ -24,13 +24,23 @@ from quay.io/curl/curl-base:latest
 RUN apk add jq
 ```
 
-Images are signed using [sigstore](https://www.sigstore.dev/). To verify an image install 
-sigstore cosign utility and use [cosign.pub](cosign.pub) public key:
+## How to verify images
+
+To view curl image signature use [sigstore](https://sigstore.dev) `cosign tree`:
+```commandline
+> cosign tree ghcr.io/curl/curl-container/curl:master
+```
+Images are verified with this [public key](https://github.com/curl/curl-container/blob/main/cosign.pub):
+```commandline
+-----BEGIN PUBLIC KEY-----
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEwFTRXl79xRiAFa5ZX4aZ7Vkdqmji
+5WY0zqc3bd6B08CsNftlYsu2gAqdWm0IlzoQpi2Zi5C437RTg/DgLQ6Bkg==
+-----END PUBLIC KEY-----
+```
+Verify image using [cosign.pub](cosign.pub) public key using [sigstore](https://sigstore.dev) `cosign verify`:
 ```
 > cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl:master
 ```
-
-**Note**- you need to login to container registry first before pulling it, ex. `{podman|docker} logon {registry}`.
 
 ## Contact
 
@@ -60,10 +70,9 @@ Platform specific dev images built daily:
 To use any of these development images; 
 ```
 > podman run -it -v /Users/exampleuser/src/curl:/src/curl  ghcr.io/curl/curl-container/curl-dev-debian:master zsh
-$> cd /src/curl
-$> ./buildconf
-$> ./configure
-$> make
+> ./buildconf
+> ./configure
+> make
 ```
 
 **Note**- dev images are not specifically scanned for vulnerabilities and we currently _pin_ to latest which 
@@ -79,16 +88,18 @@ The following are required to build or release images:
 * [buildah](https://buildah.io/): used for composing dev/build images
 * [qemu-user-static](https://github.com/multiarch/qemu-user-static): used for building multiarch images
 
-**Note**- unfortunately buildah is not (yet) available for Apple/OSX.
-
 ## Release
 
-Curl images roughly match curl own release schedule where the process is roughly as follows:
+Curl images roughly match curl own release schedule, though we may release multiple versions
+of the same curl version. In that instance we append a number (ex. 8.1.2-1) though do not rev
+the version number used in registries.
+
+The release process is as follows:
 
 * create new branch (ex. v8.1.2)
-* update VERSION to match curl version
-* update CHANGELOG
+* update [VERSION](https://github.com/curl/curl-container/blob/main/VERSION) to match curl version
+* update [CHANGELOG.md](https://github.com/curl/curl-container/blob/main/CHANGELOG.md)
 * raise prep PR, review and merge
-* create new release with new tag based on previously created branch
+* create [new release](https://github.com/curl/curl-container/releases/new) with new tag ( ex. 8.1.2 ) based on previously created branch
 * new tag will trigger CI for publishing to quay/docker
 
