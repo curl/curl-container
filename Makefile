@@ -34,6 +34,17 @@ build_fedora:
 # build_alpine dev, base and appliance image
 ##############################################
 #
+#  > make branch_or_ref=master release_tag=master run_tests=1 build_arm64
+#
+build_arm64:
+	./create_dev_image.sh "linux/arm" ${base} ${compiler} ${dev_deps} ${build_opts} ${branch_or_ref} curl-dev-linux-arm64:${release_tag} ${run_tests}
+# 	./create_base_image.sh "linux/arm64" ${base} localhost/curl-dev-linux-arm64:${release_tag} ${base_deps} curl-base-linux-arm64:${release_tag} ${release_tag}
+# 	./create_appliance_image.sh "linux/arm64" localhost/curl-base-linux-arm64:${release_tag} curl-linux-arm64:${release_tag} ${release_tag}
+
+##############################################
+# build_alpine dev, base and appliance image
+##############################################
+#
 #  > make branch_or_ref=master release_tag=master run_tests=1 build_alpine
 #
 build_alpine:

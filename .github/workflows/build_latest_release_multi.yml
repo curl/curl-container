@@ -40,7 +40,7 @@ jobs:
           docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
       - run: |
           sudo apt-get update
-          sudo apt-get -y install buildah less git make podman qemu clamav clamav-freshclam
+          sudo apt-get -y install buildah less git make podman qemu qemu-user-static clamav clamav-freshclam
         name: 'install dev deps'
       - name: Sets env vars
         run: |
