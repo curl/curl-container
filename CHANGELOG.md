@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.1.2-5] - 2023-06-14
+### Changed
+- added clamav and grype to security scan
+- added user working directory
+- skimmed apk cache
+- added back arches (arm64, etc) by fixing issue #3
+
 ## [8.1.2-4] - 2023-06-08
 ### Changed
 - fixed issue #12 by using oci format when pushing manifests V2s2
