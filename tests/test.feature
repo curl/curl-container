@@ -2,13 +2,12 @@ Feature: curl-images
 
    Scenario: Run curl images
 
-    Given a set of container images
-        | image                        |
-        | localhost/curl-dev:master     |
-        | localhost/curl-base:master    |
-        | localhost/curl:master         |
+    Given running > podman run -it localhost/curl:master -V
 
-    Then running > podman run -it {image} -V
-        | output     |
-        | test       |
+    Given running > podman run -it localhost/curl-dev:master curl -V
 
+    Given running > podman run -it localhost/curl-base:master curl -V
+
+    Given running > podman run -it localhost/curl-multi:master -V
+
+    Given running > podman run -it localhost/curl-base-multi:master curl -V

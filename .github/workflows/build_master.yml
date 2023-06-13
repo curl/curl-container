@@ -43,13 +43,13 @@ jobs:
           docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
       - run: |
           sudo apt-get update
-          sudo apt-get -y install buildah less git make podman qemu
+          sudo apt-get -y install buildah less git make podman qemu clamav clamav-freshclam
         name: 'install dev deps'
       - run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
         name: 'build master images'
       - run: buildah unshare make dist_name=localhost/curl release_tag=master test
         name: 'test image'
-      - run: make dist_name=localhost/curl release_tag=master scan
+      - run: make image_name=localhost/curl:master scan
         name: 'security scan image'
       - run: |
           buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
