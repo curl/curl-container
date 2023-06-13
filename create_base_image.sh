@@ -46,7 +46,7 @@ buildah config --label docker.cmd="podman run -it quay.io/curl/${IMAGE_NAME_DEFA
 
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
-  package_manage_update="apk update upgrade"
+  package_manage_update="apk upgrade --no-cache"
   package_manage_add="apk add --no-cache "
 fi
 if [[ "$dist" =~ .*"fedora".* ]]; then
@@ -102,6 +102,9 @@ buildah config --entrypoint '["/entrypoint.sh"]' $ctr
 buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" $ctr
 buildah config --label org.opencontainers.image.description="minimal base image for curl" $ctr
 buildah config --label org.opencontainers.image.licenses="MIT" $ctr
+
+# set working directory
+buildah config --workingdir /home/curl_user $ctr
 
 # commit image
 buildah commit $ctr "${image_name}" # --disable-compression false --squash --sign-by --tls-verify

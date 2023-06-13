@@ -42,5 +42,8 @@ buildah config --label org.opencontainers.image.source="https://github.com/curl/
 buildah config --label org.opencontainers.image.description="minimal image for curl" $ctr
 buildah config --label org.opencontainers.image.licenses="MIT" $ctr
 
+# set working directory
+buildah config --workingdir /home/curl_user $ctr
+
 # commit image
 buildah commit $ctr "${image_name}" # --disable-compression false --squash --sign-by --tls-verify

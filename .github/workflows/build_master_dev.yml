@@ -47,8 +47,8 @@ jobs:
         name: 'install dev deps'
       - run: buildah unshare make branch_or_ref=master release_tag=master build_debian
         name: 'build debian dev image'
-      - run: make dist_name=localhost/curl-dev-debian release_tag=master scan
-        name: 'security scan debian image'
+      - run: make image_name=localhost/curl-dev-debian:master scan
+        name: 'security scan image'
       - run: |
           buildah push curl-dev-debian:master "docker://ghcr.io/curl/curl-container/curl-dev-debian:master"
         name: 'push images to github registry'
@@ -68,8 +68,8 @@ jobs:
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-debian:master
       - run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
         name: 'build fedora dev image'
-      - run: make dist_name=localhost/curl-dev-fedora release_tag=master scan
-        name: 'security scan fedora image'
+      - run: make image_name=localhost/curl-dev-fedora:master scan
+        name: 'security scan image'
       - run: |
           buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
         name: 'push images to github registry'

@@ -49,7 +49,7 @@ jobs:
         name: 'build master images'
       - run: buildah unshare make dist_name=localhost/curl release_tag=master test
         name: 'test image'
-      - run: make dist_name=localhost/curl release_tag=master scan
+      - run: make image_name=localhost/curl:master scan
         name: 'security scan image'
       - run: |
           buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
