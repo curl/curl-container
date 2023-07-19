@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.2.0] - 2023-07-19
+### Changed
+- bump to curl 8.2.0
+- bump to alpine 3.18.2
+
 ## [8.1.2-5] - 2023-06-14
 ### Changed
 - added clamav and grype to security scan
