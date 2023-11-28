@@ -76,7 +76,7 @@ else
 fi
 
 # build curl
-buildah run $bdr autoreconf -vif
+buildah run $bdr autoreconf -fi
 buildah run $bdr ./configure ${build_opts}
 buildah run $bdr make -j$(nproc)
 
