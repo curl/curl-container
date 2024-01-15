@@ -28,7 +28,7 @@ build_debian:
 #  > make branch_or_ref=master release_tag=master build_fedora
 #
 build_fedora:
-	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} "gcc cargo zsh git openssl-devel python3 python3-devel python3-pip libtool curl stunnel perl nghttp2 brotli" " --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr" ${branch_or_ref} curl-dev-fedora:${release_tag}
+	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} "gcc cargo zsh git openssl-devel python3 python3-devel python3-pip libtool curl stunnel perl nghttp2 brotli libpsl-devel" " --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr" ${branch_or_ref} curl-dev-fedora:${release_tag}
 
 ##############################################
 # build_alpine dev, base and appliance image
