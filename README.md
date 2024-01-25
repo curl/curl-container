@@ -6,7 +6,7 @@
 This repository contains infrastructure/code that generates, tests and distributes the Official curl docker images 
 available from the following registries:
 * [quay.io](https://quay.io/curl/curl): curl images distributed by Quay.io
-* [docker.io](https://hub.docker.com/repository/docker/curlimages/curl): curl images distributed by docker.io
+* [docker.io](https://hub.docker.com/r/curlimages/curl): curl images distributed by docker.io
 * [github packages](https://github.com/orgs/curl/packages): development curl images
 
 To pull an image:
