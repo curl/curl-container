@@ -24,6 +24,11 @@ from quay.io/curl/curl-base:latest
 RUN apk add jq
 ```
 
+## Known limitations
+
+- **IPv6 is supported**, however Docker/Podman do not support out by default.
+  IPv6 must be enabled on network-level within Docker/Podman.
+
 ## How to verify images
 
 To view curl image signature use [sigstore](https://sigstore.dev) `cosign tree`:
@@ -46,7 +51,6 @@ Verify image using [cosign.pub](cosign.pub) public key using [sigstore](https://
 
 If you have problems, questions, ideas or suggestions, please [raise an issue](https://github.com/curl/curl-container/issues) or contact [curl-container team](curl-container@curl.se)
 or [Jim Fuller](jim.fuller@webcomposite.com) directly.
-
 
 ## Development curl images
 
