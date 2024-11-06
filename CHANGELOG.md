@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.11.0] - 2024-11-06
+### Changed
+- bump to curl 8.11.0
+
 ## [8.10.1] - 2024-09-18
 ### Changed
 - bump to curl 8.10.1
