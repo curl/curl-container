@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v3
       - run: |
           sudo apt-get update
-          sudo apt-get -y install buildah less git make podman qemu qemu-user-static clamav clamav-freshclam
+          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
         name: 'install dev deps'
       - run: buildah unshare make branch_or_ref=master release_tag=master multibuild
         name: 'build multi image'

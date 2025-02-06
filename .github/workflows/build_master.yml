@@ -43,7 +43,7 @@ jobs:
           docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
       - run: |
           sudo apt-get update
-          sudo apt-get -y install buildah less git make podman qemu clamav clamav-freshclam
+          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
         name: 'install dev deps'
       - run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
         name: 'build master images'
