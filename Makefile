@@ -2,7 +2,7 @@
 
 container_ids=`buildah ls --format "{{.ContainerID}}"`
 
-# default setttings for official curl images
+# default settings for official curl images
 debian_base=docker.io/debian
 fedora_base=docker.io/fedora
 base=docker.io/alpine:3.22.1
