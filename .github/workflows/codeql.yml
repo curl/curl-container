@@ -1,0 +1,36 @@
+name: 'CodeQL'
+
+'on':
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * 4'
+
+concurrency:
+  group: ${{ github.workflow }}
+
+permissions: {}
+
+jobs:
+  gha_python:
+    name: 'GHA and Python'
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write  # To create/update security events
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          persist-credentials: false
+
+      - name: 'initialize'
+        uses: github/codeql-action/init@192325c86100d080feab897ff886c34abd4c83a3 # v3
+        with:
+          languages: actions, python
+          queries: security-extended
+
+      - name: 'perform analysis'
+        uses: github/codeql-action/analyze@192325c86100d080feab897ff886c34abd4c83a3 # v3
