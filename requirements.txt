@@ -1,6 +1,0 @@
-pytest
-pytest-cov
-pytest-sugar
-factory-boy
-lxml
-behave
