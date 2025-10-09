@@ -88,10 +88,6 @@ fi
 # install curl in /build
 buildah run $bdr make DESTDIR="/build/" install  -j$(nproc)
 
-# install useful dev deps¡
-buildah run $bdr python3 -m ensurepip
-#buildah run $bdr pip3 --no-input install -r ./requirements.txt
-
 # label image
 buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" $bdr
 buildah config --label org.opencontainers.image.description="minimal dev image for curl" $bdr
