@@ -42,7 +42,7 @@ ctrmnt=$(buildah mount $ctr)
 buildah config --label maintainer="James Fuller <jim.fuller@webcomposite.com>" $ctr
 buildah config --label name="${image_name}" $ctr
 buildah config --label version="${release_tag}" $ctr
-buildah config --label docker.cmd="podman run -it quay.io/curl/${IMAGE_NAME_DEFAULT}:${release_tag}" $ctr
+buildah config --label docker.cmd="podman run -it quay.io/curl/${image_name}:${release_tag}" $ctr
 
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
