@@ -64,7 +64,9 @@ jobs:
       - name: Install Cosign
         uses: sigstore/cosign-installer@d7543c93d881b35a8faa02e8e3605f69b7a1ce62 # v3.10.0
       - name: Write signing key to disk (only needed for `cosign sign --key`)
-        run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
+        env:
+          COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
+        run: echo "${COSIGN_PRIVATE_KEY}" > cosign.key
       - name: Sign image with a key
         run: |
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-debian:master
