@@ -1,7 +1,8 @@
 name: build_ci_multi_images
-on:
+
+'on':
   pull_request:
-    types: [ opened, synchronize, reopened, labeled, unlabeled ]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
     branches:
       - main
 
@@ -21,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        install_latest: [ true ]
+        install_latest: [true]
     steps:
       - name: "login docker hub"
         env:

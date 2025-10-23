@@ -1,5 +1,6 @@
 name: build_latest_release_multi_images
-on:
+
+'on':
   push:
     tags:
       - '*'
@@ -20,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        install_latest: [ true ]
+        install_latest: [true]
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
