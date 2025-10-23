@@ -21,4 +21,3 @@ def invoke_podman_image(context, image):
     cmd = f"podman run -it {image} -V".split()
     p = subprocess.run(cmd,capture_output=True, text=True)
     assert p.returncode == 0
-
