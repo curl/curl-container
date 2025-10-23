@@ -126,7 +126,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix entrypoint perms
 
 ## [8.1.2-2] - 2023-06-08
-### Added 
+### Added
 - curl-dev-fedora:master
 - curl-dev-debian:master
 ### Changed
@@ -143,4 +143,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - created [curl-container repo](https://github.com/curl/curl-container/pull/1)
 ### Changed
-- generate [curl:8.1.2 release](https://github.com/curl/curl/releases/tag/curl-8_1_2) images on [alpine 3.18.0](https://alpinelinux.org/posts/Alpine-3.18.0-released.html) 
+- generate [curl:8.1.2 release](https://github.com/curl/curl/releases/tag/curl-8_1_2) images on [alpine 3.18.0](https://alpinelinux.org/posts/Alpine-3.18.0-released.html)

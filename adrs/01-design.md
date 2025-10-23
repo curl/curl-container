@@ -69,7 +69,7 @@ Enhance testing
 We could keep the status quo (eg. ugly bash/makefile) though it is hard to maintain... also current release process is completely
 opaque and non automated.
 
-We could have opted for other container build frameworks/language or other adjuncts (ex. [skopeo](https://github.com/containers/skopeo)) ... 
+We could have opted for other container build frameworks/language or other adjuncts (ex. [skopeo](https://github.com/containers/skopeo)) ...
 buildah seemed to have the right set of features and mature ... perhaps in the future we will have even more choices.
 
 Presumably we could have gone full 'code as infrastructure' and invoke buildah programmatically ... opted for shell scripts

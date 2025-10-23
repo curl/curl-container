@@ -95,4 +95,3 @@ buildah config --label org.opencontainers.image.licenses="MIT" $bdr
 
 # commit image
 buildah commit $bdr "${image_name}" # --disable-compression false --squash --sign-by --tls-verify
-
