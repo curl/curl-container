@@ -19,8 +19,7 @@ jobs:
     name: ${{ matrix.build.name }}
     runs-on: 'ubuntu-latest'
     permissions:
-      contents: read
-      packages: write
+      packages: write  # To create/update container on ghcr.io
     strategy:
       fail-fast: false
       matrix:
