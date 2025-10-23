@@ -37,13 +37,19 @@ jobs:
           password: ${{ env.REGISTRY_PASSWORD }}
           registry: ${{ env.IMAGE_REGISTRY }}
       - name: "login docker hub"
+        env:
+          DOCKER_HUB_USER: '${{secrets.DOCKER_HUB_USER}}'
+          DOCKER_HUB_TOKEN: '${{secrets.DOCKER_HUB_TOKEN}}'
         run: |
-          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
-          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
+          podman login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}" docker.io
+          docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
       - name: "login quay.io"
+        env:
+          QUAY_USER: '${{secrets.QUAY_USER}}'
+          QUAY_TOKEN: '${{secrets.QUAY_TOKEN}}'
         run: |
-          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
-          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
+          podman login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
+          docker login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
       - run: |
           sudo apt-get update
           sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
