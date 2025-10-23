@@ -1,11 +1,12 @@
 name: build_dev_master_images
-on:
+
+'on':
   schedule:
     # Runs every day
     - cron: '30 2 * * *'
   push:
     branches:
-    - main
+      - main
 
 permissions: {}
 
@@ -24,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        install_latest: [ true ]
+        install_latest: [true]
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
