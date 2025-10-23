@@ -39,15 +39,15 @@ jobs:
           registry: ${{ env.IMAGE_REGISTRY }}
       - name: "login docker hub"
         env:
-          DOCKER_HUB_USER: '${{secrets.DOCKER_HUB_USER}}'
-          DOCKER_HUB_TOKEN: '${{secrets.DOCKER_HUB_TOKEN}}'
+          DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
+          DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
         run: |
           podman login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}" docker.io
           docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
       - name: "login quay.io"
         env:
-          QUAY_USER: '${{secrets.QUAY_USER}}'
-          QUAY_TOKEN: '${{secrets.QUAY_TOKEN}}'
+          QUAY_USER: '${{ secrets.QUAY_USER }}'
+          QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
         run: |
           podman login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
           docker login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
