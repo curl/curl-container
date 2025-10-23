@@ -77,7 +77,9 @@ jobs:
         env:
           COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
       - name: Write public key to disk
-        run: echo "${{ secrets.COSIGN_PUBLIC_KEY }}" > cosign.pub
+        env:
+          COSIGN_PUBLIC_KEY: '${{ secrets.COSIGN_PUBLIC_KEY }}'
+        run: echo "${COSIGN_PUBLIC_KEY}" > cosign.pub
       - name: Verify image with public key
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:master
