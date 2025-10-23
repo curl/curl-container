@@ -28,8 +28,7 @@ jobs:
           persist-credentials: false
 
       - name: 'install prereqs'
-        run: |
-          /home/linuxbrew/.linuxbrew/bin/brew install zizmor typos-cli
+        run: /home/linuxbrew/.linuxbrew/bin/brew install zizmor typos-cli
 
       - name: 'zizmor GHA'
         env:
