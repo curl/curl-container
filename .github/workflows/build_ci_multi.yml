@@ -29,15 +29,19 @@ jobs:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
           DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
         run: |
-          podman login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}" docker.io
-          docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
+          if [ -n "${DOCKER_HUB_USER:+1}" ]; then
+            podman login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}" docker.io
+            docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
+          fi
       - name: "login quay.io"
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
           QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
         run: |
-          podman login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
-          docker login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
+          if [ -n "${QUAY_USER:+1}" ]; then
+            podman login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
+            docker login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
+          fi
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
