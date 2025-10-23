@@ -64,7 +64,7 @@ Master branch built regularly:
 * **curl-base-multi:master** - curl-base multiarch **master** branch
 
 A set of special case images built regularly:
-* **curl-exp:master** - curl **master** branch built enabling expiremental features
+* **curl-exp:master** - curl **master** branch built enabling experimental features
 
 Platform specific dev images built daily:
 * **curl-dev:master** - alpine based development environment
