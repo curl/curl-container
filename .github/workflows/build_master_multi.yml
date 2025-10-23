@@ -5,7 +5,7 @@ name: build_master_multi_images
     - cron: '30 2 * * *'
   push:
     branches:
-    - main
+      - main
 
 permissions: {}
 
