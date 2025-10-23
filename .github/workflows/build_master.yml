@@ -78,4 +78,3 @@ jobs:
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev:master
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base:master
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl:master
-
