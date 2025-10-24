@@ -46,17 +46,6 @@ jobs:
           docker --version
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
 
-      - name: "login ghcr.io (repo owner, bogus, direct)"
-        env:
-          REGISTRY_USER: '${{ github.repository_owner }}'
-          REGISTRY_TOKEN: 'bogus-password'
-          IMAGE_REGISTRY: 'ghcr.io/${{ github.repository_owner }}'
-        run: |
-          podman --version
-          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
-          docker --version
-          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
-
   verify_secrets_registries:
     name: 'Verify credentials (docker hub, quay)'
     runs-on: 'ubuntu-latest'
