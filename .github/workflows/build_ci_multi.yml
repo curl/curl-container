@@ -9,7 +9,7 @@ name: build_ci_multi_images
 permissions: {}
 
 jobs:
-  verify_secrets:
+  verify_secrets_ghcr:
     name: 'Verify credentials (ghcr)'
     runs-on: 'ubuntu-latest'
     env:
@@ -24,7 +24,7 @@ jobs:
           password: ${{ env.REGISTRY_PASSWORD }}
           registry: ${{ env.IMAGE_REGISTRY }}
 
-  verify_secrets:
+  verify_secrets_registries:
     name: 'Verify credentials (docker hub, quay)'
     runs-on: 'ubuntu-latest'
     if: ${{ github.secret_source == 'Actions' }}
