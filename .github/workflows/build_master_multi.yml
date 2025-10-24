@@ -43,20 +43,16 @@ jobs:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
           DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
         run: |
-          if [ -n "${DOCKER_HUB_USER:+1}" ]; then
-            podman login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}" docker.io
-            docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
-          fi
+          podman login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}" docker.io
+          docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
       - name: "login quay.io"
         if: ${{ github.secret_source == 'Actions' }}
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
           QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
         run: |
-          if [ -n "${QUAY_USER:+1}" ]; then
-            podman login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
-            docker login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
-          fi
+          podman login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
+          docker login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
       - run: |
           sudo apt-get update
           sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
