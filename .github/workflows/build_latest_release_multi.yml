@@ -5,6 +5,10 @@ name: build_latest_release_multi_images
     tags:
       - '*'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:

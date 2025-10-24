@@ -8,6 +8,10 @@ name: build_dev_master_images
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
