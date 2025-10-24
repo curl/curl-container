@@ -28,12 +28,11 @@ jobs:
         env:
           REGISTRY_USER: '${{ github.actor }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          IMAGE_REGISTRY: 'ghcr.io/${{ github.repository_owner }}'
         run: |
           podman --version
-          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
           docker --version
-          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
 
       - name: "login ghcr.io (repo owner, direct)"
         env:
