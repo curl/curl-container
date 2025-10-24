@@ -10,7 +10,22 @@ permissions: {}
 
 jobs:
   verify_secrets:
-    name: 'Verify credentials'
+    name: 'Verify credentials (ghcr)'
+    runs-on: 'ubuntu-latest'
+    env:
+      REGISTRY_USER: ${{ github.actor }}
+      REGISTRY_PASSWORD: ${{ github.token }}
+      IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+    steps:
+      - name: 'login ghcr.io'
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
+        with:
+          username: ${{ env.REGISTRY_USER }}
+          password: ${{ env.REGISTRY_PASSWORD }}
+          registry: ${{ env.IMAGE_REGISTRY }}
+
+  verify_secrets:
+    name: 'Verify credentials (docker hub, quay)'
     runs-on: 'ubuntu-latest'
     if: ${{ github.secret_source == 'Actions' }}
     steps:
