@@ -33,7 +33,7 @@ jobs:
           make image_name=localhost/curl-multi:master scan
 
   verify_secrets:
-    name: ${{ matrix.build.name }}
+    name: 'Verify credentials'
     runs-on: 'ubuntu-latest'
     if: ${{ github.secret_source == 'Actions' }}
     steps:
