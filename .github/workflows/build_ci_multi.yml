@@ -10,7 +10,7 @@ permissions: {}
 
 jobs:
   build_multi_ci:
-    name: ${{ matrix.build.name }}
+    name: 'build_multi_ci'
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'install dev deps'
