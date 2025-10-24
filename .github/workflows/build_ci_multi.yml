@@ -12,10 +12,6 @@ jobs:
   build_multi_ci:
     name: ${{ matrix.build.name }}
     runs-on: 'ubuntu-latest'
-    strategy:
-      fail-fast: false
-      matrix:
-        install_latest: [true]
     steps:
       - name: 'install dev deps'
         run: |
