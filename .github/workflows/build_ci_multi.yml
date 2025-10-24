@@ -25,6 +25,7 @@ jobs:
         install_latest: [true]
     steps:
       - name: "login docker hub"
+        if: ${{ github.secret_source == 'Actions' }}
         env:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
           DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
@@ -34,6 +35,7 @@ jobs:
             docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
           fi
       - name: "login quay.io"
+        if: ${{ github.secret_source == 'Actions' }}
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
           QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
