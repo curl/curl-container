@@ -8,46 +8,23 @@ name: build_ci_multi_images
 
 permissions: {}
 
-env:
-  REGISTRY_USER: ${{ github.actor }}
-  REGISTRY_PASSWORD: ${{ github.token }}
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-
 jobs:
   build_multi_ci:
     name: ${{ matrix.build.name }}
     runs-on: 'ubuntu-latest'
-    permissions:
-      packages: write  # To create/update container on ghcr.io
     strategy:
       fail-fast: false
       matrix:
         install_latest: [true]
     steps:
-      - name: "login docker hub"
-        if: ${{ github.secret_source == 'Actions' }}
-        env:
-          DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
-          DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
+      - name: 'install dev deps'
         run: |
-          podman login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}" docker.io
-          docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
-      - name: "login quay.io"
-        if: ${{ github.secret_source == 'Actions' }}
-        env:
-          QUAY_USER: '${{ secrets.QUAY_USER }}'
-          QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
-        run: |
-          podman login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
-          docker login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
+          sudo apt-get update
+          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-      - run: |
-          sudo apt-get update
-          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
-        name: 'install dev deps'
       - run: buildah unshare make branch_or_ref=master release_tag=master multibuild
         name: 'build multi image'
       - run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
@@ -58,3 +35,24 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-multi:master scan
+
+  verify_secrets:
+    name: ${{ matrix.build.name }}
+    runs-on: 'ubuntu-latest'
+    if: ${{ github.secret_source == 'Actions' }}
+    steps:
+      - name: "login docker hub"
+        env:
+          DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
+          DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
+        run: |
+          podman login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}" docker.io
+          docker login -u "${DOCKER_HUB_USER}" -p "${DOCKER_HUB_TOKEN}"
+
+      - name: "login quay.io"
+        env:
+          QUAY_USER: '${{ secrets.QUAY_USER }}'
+          QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
+        run: |
+          podman login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
+          docker login -u "${QUAY_USER}" -p "${QUAY_TOKEN}" quay.io
