@@ -9,11 +9,6 @@ name: build_master_multi_images
 
 permissions: {}
 
-env:
-  REGISTRY_USER: ${{ github.actor }}
-  REGISTRY_PASSWORD: ${{ github.token }}
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-
 jobs:
   build_multi_master:
     if: ${{ github.repository_owner == 'curl' || github.event_name != 'schedule' }}
@@ -25,6 +20,10 @@ jobs:
       fail-fast: false
       matrix:
         install_latest: [true]
+    env:
+      REGISTRY_USER: ${{ github.actor }}
+      REGISTRY_PASSWORD: ${{ github.token }}
+      IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
