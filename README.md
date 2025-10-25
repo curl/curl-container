@@ -1,9 +1,9 @@
 # Curl Container
 
-[![build_master_multi_images](https://github.com/curl/curl-container/actions/workflows/build_master_multi.yml/badge.svg)](https://github.com/curl/curl-container/actions/workflows/build_master_multi.yml) 
+[![build_master_multi_images](https://github.com/curl/curl-container/actions/workflows/build_master_multi.yml/badge.svg)](https://github.com/curl/curl-container/actions/workflows/build_master_multi.yml)
 [![build_latest_release_multi_images](https://github.com/curl/curl-container/actions/workflows/build_latest_release_multi.yml/badge.svg)](https://github.com/curl/curl-container/actions/workflows/build_latest_release_multi.yml)
 
-This repository contains infrastructure/code that generates, tests and distributes the Official curl docker images 
+This repository contains infrastructure/code that generates, tests and distributes the Official curl docker images
 available from the following registries:
 * [quay.io](https://quay.io/curl/curl): curl images distributed by Quay.io
 * [docker.io](https://hub.docker.com/r/curlimages/curl): curl images distributed by docker.io
@@ -57,21 +57,21 @@ or [Jim Fuller](jim.fuller@webcomposite.com) directly.
 The following images are available via [github packages](https://github.com/orgs/curl/packages).
 
 Master branch built regularly:
-* **curl-dev:master** - curl-dev **master** branch 
+* **curl-dev:master** - curl-dev **master** branch
 * **curl-base:master** - curl-base **master** branch
 * **curl:master** - curl **master** branch
 * **curl-multi:master** - curl multiarch **master** branch
 * **curl-base-multi:master** - curl-base multiarch **master** branch
 
 A set of special case images built regularly:
-* **curl-exp:master** - curl **master** branch built enabling expiremental features
+* **curl-exp:master** - curl **master** branch built enabling experimental features
 
 Platform specific dev images built daily:
 * **curl-dev:master** - alpine based development environment
 * **curl-dev-debian:master** - debian based development environment
 * **curl-dev-fedora:master** - fedora based development environment
 
-To use any of these development images; 
+To use any of these development images;
 ```
 > podman run -it -v /Users/exampleuser/src/curl:/src/curl  ghcr.io/curl/curl-container/curl-dev-debian:master zsh
 > ./buildconf
@@ -79,16 +79,16 @@ To use any of these development images;
 > make
 ```
 
-**Note**- dev images are not specifically scanned for vulnerabilities and we currently _pin_ to latest which 
+**Note**- dev images are not specifically scanned for vulnerabilities and we currently _pin_ to latest which
 always has vulns ... **use at your own risk**. Perhaps we could consider _pinning_ to a later 'vintage'.
 
 ## Dependencies
 
 Either of the following are required to use images:
-* [podman](https://podman.io/getting-started/) 
+* [podman](https://podman.io/getting-started/)
 * [docker](https://docs.docker.com/get-docker/)
 
-The following are required to build or release images: 
+The following are required to build or release images:
 * [buildah](https://buildah.io/): used for composing dev/build images
 * [qemu-user-static](https://github.com/multiarch/qemu-user-static): used for building multiarch images
 
@@ -106,4 +106,3 @@ The release process is as follows:
 * raise prep PR, review and merge
 * create [new release](https://github.com/curl/curl-container/releases/new) with new tag ( ex. 8.1.2 ) based on previously created branch
 * new tag will trigger CI for publishing to quay/docker
-
