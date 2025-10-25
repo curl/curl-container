@@ -72,8 +72,12 @@ jobs:
     steps:
       - name: 'install dev deps'
         run: |
-          sudo apt-get update
-          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo apt-get -o Dpkg::Use-Pty=0 update
+          sudo rm -f /var/lib/man-db/auto-update
+          sudo apt-get -o Dpkg::Use-Pty=0 install -y \
+            qemu-user-static buildah less git make podman clamav clamav-freshclam
+
       - name: Checkout repository
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
