@@ -82,10 +82,10 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           persist-credentials: false
-      - run: buildah unshare make branch_or_ref=master release_tag=master multibuild
-        name: 'build multi image'
-      - run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
-        name: 'test image'
+      - name: 'build multi image'
+        run: buildah unshare make branch_or_ref=master release_tag=master multibuild
+      - name: 'test image'
+        run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
       - name: 'install scan prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
       - name: 'security scan image'
