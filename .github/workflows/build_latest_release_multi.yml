@@ -103,7 +103,7 @@ jobs:
           cosign sign -y --key cosign.key docker.io/curlimages/curl-base:latest
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      - name: Verify image
+      - name: Verify image with public key
         run: |
           cosign verify --key cosign.pub docker.io/curlimages/curl:$REL
           cosign verify --key cosign.pub docker.io/curlimages/curl:latest
@@ -123,7 +123,7 @@ jobs:
           cosign sign -y --key cosign.key quay.io/curl/curl-base:latest
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      - name: Verify image
+      - name: Verify image with public key
         run: |
           cosign verify --key cosign.pub quay.io/curl/curl:$REL
           cosign verify --key cosign.pub quay.io/curl/curl:latest
