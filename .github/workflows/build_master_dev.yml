@@ -29,7 +29,7 @@ jobs:
         with:
           persist-credentials: false
           ref: 'main'
-      - name: 'log in to ghcr.io'
+      - name: 'login ghcr.io'
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         with:
           username: ${{ github.actor }}
