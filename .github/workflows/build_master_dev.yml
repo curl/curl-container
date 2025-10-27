@@ -72,10 +72,10 @@ jobs:
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: echo "${COSIGN_PRIVATE_KEY}" > cosign.key
       - name: 'sign image with a key'
-        run: |
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-debian:master
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        run: |
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-debian:master
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-debian:master
@@ -89,10 +89,10 @@ jobs:
         run: |
           buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
       - name: 'sign image with a key'
-        run: |
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-fedora:master
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+        run: |
+          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-fedora:master
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-fedora:master
