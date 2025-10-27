@@ -24,7 +24,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
           registry: ghcr.io/${{ github.repository_owner }}
 
-      - name: "login ghcr.io (actor, direct)"
+      - name: 'login ghcr.io (actor, direct)'
         env:
           REGISTRY_USER: '${{ github.actor }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -34,7 +34,7 @@ jobs:
           docker --version
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
 
-      - name: "login ghcr.io (repo owner, direct)"
+      - name: 'login ghcr.io (repo owner, direct)'
         env:
           REGISTRY_USER: '${{ github.repository_owner }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -50,7 +50,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     if: ${{ github.secret_source == 'Actions' }}
     steps:
-      - name: "login docker hub"
+      - name: 'login docker hub'
         env:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
           DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
@@ -58,7 +58,7 @@ jobs:
           echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
           echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
 
-      - name: "login quay.io"
+      - name: 'login quay.io'
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
           QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
