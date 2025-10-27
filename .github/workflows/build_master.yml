@@ -29,7 +29,7 @@ jobs:
         with:
           persist-credentials: false
           ref: 'main'
-      - name: 'Log in to ghcr.io'
+      - name: 'log in to ghcr.io'
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         with:
           username: ${{ github.actor }}
@@ -68,20 +68,20 @@ jobs:
           buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
           buildah push curl-base:master "docker://ghcr.io/curl/curl-container/curl-base:master"
           buildah push curl:master "docker://ghcr.io/curl/curl-container/curl:master"
-      - name: 'Install Cosign'
+      - name: 'install Cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
-      - name: 'Write signing key to disk (only needed for `cosign sign --key`)'
+      - name: 'write signing key to disk (only needed for `cosign sign --key`)'
         env:
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: echo "${COSIGN_PRIVATE_KEY}" > cosign.key
-      - name: 'Sign image with a key'
+      - name: 'sign image with a key'
         run: |
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev:master
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-base:master
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl:master
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      - name: 'Verify image with public key'
+      - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev:master
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base:master
