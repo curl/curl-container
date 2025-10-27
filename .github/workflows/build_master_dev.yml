@@ -88,8 +88,6 @@ jobs:
       - name: 'push images to github registry'
         run: |
           buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
-      - name: 'install Cosign'
-        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
       - name: 'sign image with a key'
         run: |
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-fedora:master
