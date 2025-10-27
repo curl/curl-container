@@ -26,7 +26,7 @@ jobs:
         with:
           persist-credentials: false
           tag_name: ${{ github.ref }}
-      - name: Log in to ghcr.io
+      - name: 'Log in to ghcr.io'
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         with:
           username: ${{ github.actor }}
@@ -50,7 +50,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
-      - name: Sets env vars
+      - name: 'Sets env vars'
         run: |
           release_tag_redirect=$(curl -s https://github.com/curl/curl/releases/latest -w'%{redirect_url}\n' -o /dev/null)
           latest_release_ref=$(basename ${release_tag_redirect})
@@ -72,19 +72,19 @@ jobs:
         run: |
           buildah manifest push --format v2s2 --all curl-multi:$REL "docker://ghcr.io/curl/curl-container/curl-multi:${REL}"
           buildah manifest push --format v2s2 --all curl-base-multi:$REL "docker://ghcr.io/curl/curl-container/curl-base-multi:${REL}"
-      - name: Install Cosign
+      - name: 'Install Cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
-      - name: Write signing key to disk (only needed for `cosign sign --key`)
+      - name: 'Write signing key to disk (only needed for `cosign sign --key`)'
         env:
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: echo "${COSIGN_PRIVATE_KEY}" > cosign.key
-      - name: Sign images with sigstore key
+      - name: 'Sign images with sigstore key'
         run: |
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-multi:$REL
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-base-multi:$REL
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      - name: Verify image with public key
+      - name: 'Verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:$REL
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base-multi:$REL
@@ -94,7 +94,7 @@ jobs:
           buildah manifest push --format v2s2 --all localhost/curl-multi:$REL "docker://docker.io/curlimages/curl:latest"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:${REL}"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:latest"
-      - name: Sign images with a sigstore key
+      - name: 'Sign images with a sigstore key'
         run: |
           cosign sign -y --key cosign.key docker.io/curlimages/curl:$REL
           cosign sign -y --key cosign.key docker.io/curlimages/curl:latest
@@ -102,7 +102,7 @@ jobs:
           cosign sign -y --key cosign.key docker.io/curlimages/curl-base:latest
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      - name: Verify image with public key
+      - name: 'Verify image with public key'
         run: |
           cosign verify --key cosign.pub docker.io/curlimages/curl:$REL
           cosign verify --key cosign.pub docker.io/curlimages/curl:latest
@@ -114,7 +114,7 @@ jobs:
           buildah manifest push --format v2s2 --all localhost/curl-multi:$REL "docker://quay.io/curl/curl:latest"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:${REL}"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:latest"
-      - name: Sign images with a sigstore key
+      - name: 'Sign images with a sigstore key'
         run: |
           cosign sign -y --key cosign.key quay.io/curl/curl:$REL
           cosign sign -y --key cosign.key quay.io/curl/curl:latest
@@ -122,7 +122,7 @@ jobs:
           cosign sign -y --key cosign.key quay.io/curl/curl-base:latest
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-      - name: Verify image with public key
+      - name: 'Verify image with public key'
         run: |
           cosign verify --key cosign.pub quay.io/curl/curl:$REL
           cosign verify --key cosign.pub quay.io/curl/curl:latest
