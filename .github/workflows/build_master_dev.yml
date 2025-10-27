@@ -51,21 +51,21 @@ jobs:
         run: |
           echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
           echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
-      - run: |
+      - name: 'install dev deps'
+        run: |
           sudo apt-get update
           sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
-        name: 'install dev deps'
-      - run: buildah unshare make branch_or_ref=master release_tag=master build_debian
-        name: 'build debian dev image'
+      - name: 'build debian dev image'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_debian
       - name: 'install scan prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-dev-debian:master scan
-      - run: |
+      - name: 'push images to github registry'
+        run: |
           buildah push curl-dev-debian:master "docker://ghcr.io/curl/curl-container/curl-dev-debian:master"
-        name: 'push images to github registry'
       - name: Install Cosign
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
       - name: Write signing key to disk (only needed for `cosign sign --key`)
@@ -80,15 +80,15 @@ jobs:
       - name: Verify image with public key
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-debian:master
-      - run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
-        name: 'build fedora dev image'
+      - name: 'build fedora dev image'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-dev-fedora:master scan
-      - run: |
+      - name: 'push images to github registry'
+        run: |
           buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
-        name: 'push images to github registry'
       - name: Install Cosign
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
       - name: Sign image with a key

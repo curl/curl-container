@@ -50,25 +50,25 @@ jobs:
         run: |
           echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
           echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
-      - run: |
+      - name: 'install dev deps'
+        run: |
           sudo apt-get update
           sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
-        name: 'install dev deps'
-      - run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
-        name: 'build master images'
-      - run: buildah unshare make dist_name=localhost/curl release_tag=master test
-        name: 'test image'
+      - name: 'build master images'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
+      - name: 'test image'
+        run: buildah unshare make dist_name=localhost/curl release_tag=master test
       - name: 'install scan prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl:master scan
-      - run: |
+      - name: 'push images to github registry'
+        run: |
           buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
           buildah push curl-base:master "docker://ghcr.io/curl/curl-container/curl-base:master"
           buildah push curl:master "docker://ghcr.io/curl/curl-container/curl:master"
-        name: 'push images to github registry'
       - name: Install Cosign
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
       - name: Write signing key to disk (only needed for `cosign sign --key`)
