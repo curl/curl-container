@@ -17,6 +17,8 @@ jobs:
     name: 'Verify credentials'
     runs-on: 'ubuntu-latest'
     steps:
+      # upside: it logs out and deletes ~/.docker/config.json
+      # downside: extra dependency, uses -p instead of --password-stdin
       - name: 'login ghcr.io (actor, via action)'
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         with:
