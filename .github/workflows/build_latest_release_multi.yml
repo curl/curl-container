@@ -79,11 +79,11 @@ jobs:
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: echo "${COSIGN_PRIVATE_KEY}" > cosign.key
       - name: 'sign images with sigstore key'
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
         run: |
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-multi:$REL
           cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-base-multi:$REL
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:$REL
@@ -95,13 +95,13 @@ jobs:
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:${REL}"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:$REL "docker://docker.io/curlimages/curl-base:latest"
       - name: 'sign images with a sigstore key'
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
         run: |
           cosign sign -y --key cosign.key docker.io/curlimages/curl:$REL
           cosign sign -y --key cosign.key docker.io/curlimages/curl:latest
           cosign sign -y --key cosign.key docker.io/curlimages/curl-base:$REL
           cosign sign -y --key cosign.key docker.io/curlimages/curl-base:latest
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub docker.io/curlimages/curl:$REL
@@ -115,13 +115,13 @@ jobs:
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:${REL}"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:$REL "docker://quay.io/curl/curl-base:latest"
       - name: 'sign images with a sigstore key'
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
         run: |
           cosign sign -y --key cosign.key quay.io/curl/curl:$REL
           cosign sign -y --key cosign.key quay.io/curl/curl:latest
           cosign sign -y --key cosign.key quay.io/curl/curl-base:$REL
           cosign sign -y --key cosign.key quay.io/curl/curl-base:latest
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub quay.io/curl/curl:$REL
