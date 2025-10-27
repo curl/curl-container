@@ -50,7 +50,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
-      - name: 'sets env vars'
+      - name: 'set env vars'
         run: |
           release_tag_redirect=$(curl -s https://github.com/curl/curl/releases/latest -w'%{redirect_url}\n' -o /dev/null)
           latest_release_ref=$(basename ${release_tag_redirect})
