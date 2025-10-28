@@ -77,7 +77,7 @@ fi
 
 # build curl
 buildah run $bdr autoreconf -fi
-buildah run $bdr ./configure ${build_opts}
+buildah run $bdr ./configure --disable-dependency-tracking ${build_opts}
 buildah run $bdr make -j$(nproc)
 
 # run tests
