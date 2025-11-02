@@ -13,3 +13,5 @@ updates:
       gha-dependencies:
         patterns:
           - '*'
+    commit-message:
+      prefix: 'GHA:'
