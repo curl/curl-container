@@ -40,7 +40,7 @@ jobs:
       - name: 'actionlint'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          export SHELLCHECK_OPTS='--exclude=1090,1091,2153 --enable=avoid-nullary-conditions,deprecate-which'
+          export SHELLCHECK_OPTS='--enable=avoid-nullary-conditions,deprecate-which'
           actionlint --version
           actionlint .github/workflows/*.yml
 
