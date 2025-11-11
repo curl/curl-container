@@ -28,7 +28,7 @@ jobs:
           persist-credentials: false
 
       - name: 'install prereqs'
-        run: /home/linuxbrew/.linuxbrew/bin/brew install zizmor typos-cli
+        run: /home/linuxbrew/.linuxbrew/bin/brew install actionlint zizmor typos-cli
 
       - name: 'zizmor GHA'
         env:
@@ -36,6 +36,13 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           zizmor --pedantic .github/workflows/*.yml
+
+      - name: 'actionlint'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          export SHELLCHECK_OPTS='--exclude=1090,1091,2153 --enable=avoid-nullary-conditions,deprecate-which'
+          actionlint --version
+          actionlint .github/workflows/*.yml
 
       - name: 'typos'
         run: |
