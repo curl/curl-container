@@ -15,7 +15,7 @@ permissions: {}
 
 jobs:
   build_multi_master:
-    name: ${{ matrix.build.name }}
+    name: 'build_multi_master'
     runs-on: 'ubuntu-latest'
     permissions:
       packages: write  # To create/update container on ghcr.io
