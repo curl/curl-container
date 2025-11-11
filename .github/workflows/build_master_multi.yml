@@ -16,7 +16,7 @@ permissions: {}
 jobs:
   build_multi_master:
     if: ${{ github.repository_owner == 'curl' || github.event_name != 'schedule' }}
-    name: ${{ matrix.build.name }}
+    name: 'build_multi_master'
     runs-on: 'ubuntu-latest'
     permissions:
       packages: write  # To create/update container on ghcr.io
