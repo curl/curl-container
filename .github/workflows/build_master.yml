@@ -1,7 +1,7 @@
 name: build_master_images
 on:
   schedule:
-    - cron: '30 2 * * * '
+    - cron: '30 2 * * *'
   push:
     branches:
     - main
@@ -15,6 +15,7 @@ env:
 
 jobs:
   build_master:
+    if: ${{ github.repository_owner == 'curl' || github.event_name != 'schedule' }}
     name: ${{ matrix.build.name }}
     runs-on: 'ubuntu-latest'
     permissions:
