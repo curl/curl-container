@@ -2,7 +2,7 @@ name: build_dev_master_images
 on:
   schedule:
     # Runs every day
-    - cron: '30 2 * * * '
+    - cron: '30 2 * * *'
   push:
     branches:
     - main

@@ -1,7 +1,7 @@
 name: build_master_images
 on:
   schedule:
-    - cron: '30 2 * * * '
+    - cron: '30 2 * * *'
   push:
     branches:
     - main
