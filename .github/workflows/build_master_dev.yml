@@ -26,10 +26,6 @@ jobs:
       matrix:
         install_latest: [true]
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
-        with:
-          persist-credentials: false
-          ref: 'main'
       - name: 'login ghcr.io'
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         with:
@@ -54,6 +50,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          persist-credentials: false
+          ref: 'main'
       - name: 'build debian dev image'
         run: buildah unshare make branch_or_ref=master release_tag=master build_debian
       - name: 'install scan prereqs'
