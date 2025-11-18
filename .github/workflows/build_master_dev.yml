@@ -48,8 +48,11 @@ jobs:
           echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
       - name: 'install dev deps'
         run: |
-          sudo apt-get update
-          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo apt-get -o Dpkg::Use-Pty=0 update
+          sudo rm -f /var/lib/man-db/auto-update
+          sudo apt-get -o Dpkg::Use-Pty=0 install -y \
+            qemu-user-static buildah less git make podman clamav clamav-freshclam
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           persist-credentials: false
