@@ -67,15 +67,12 @@ jobs:
           buildah push curl-dev-debian:master "docker://ghcr.io/curl/curl-container/curl-dev-debian:master"
       - name: 'install Cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
-      - name: 'write signing key to disk (only needed for `cosign sign --key`)'
-        env:
-          COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
-        run: echo "${COSIGN_PRIVATE_KEY}" > cosign.key
       - name: 'sign image with a key'
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-debian:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /srv/stdin ghcr.io/curl/curl-container/curl-dev-debian:master
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-debian:master
@@ -91,8 +88,9 @@ jobs:
       - name: 'sign image with a key'
         env:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
+          COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev-fedora:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /srv/stdin ghcr.io/curl/curl-container/curl-dev-fedora:master
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-fedora:master
