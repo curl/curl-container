@@ -25,18 +25,18 @@ ctrmnt=$(buildah mount $ctr)
 
 # check file exists
 if [[ ! -f "$ctrmnt/usr/bin/curl" ]]; then
-    echo "/usr/bin/curl does not exist."
+  echo "/usr/bin/curl does not exist."
 fi
 if [[ ! -f "$ctrmnt/usr/lib/libcurl.so.4.8.0" ]]; then
-    echo "/usr/lib/libcurl.so.4.8.0 does not exist."
+  echo "/usr/lib/libcurl.so.4.8.0 does not exist."
 fi
 
 # check symlink exists and is not broken
 if [ ! -L "$ctrmnt/usr/lib/libcurl.so.4" ] && [ ! -e "$ctrmnt/usr/lib/libcurl.so.4" ]; then
-    echo "/usr/lib/libcurl.so.4 symlink does not exist or is broken."
+  echo "/usr/lib/libcurl.so.4 symlink does not exist or is broken."
 fi
 if [ ! -L "$ctrmnt/usr/lib/libcurl.so" ] && [ ! -e "$ctrmnt/usr/lib/libcurl.so"  ]; then
-    echo "/usr/lib/libcurl.so symlink does not exist or is broken."
+  echo "/usr/lib/libcurl.so symlink does not exist or is broken."
 fi
 
 # test running curl

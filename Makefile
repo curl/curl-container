@@ -2,7 +2,7 @@
 
 container_ids=`buildah ls --format "{{.ContainerID}}"`
 
-# default setttings for official curl images
+# default settings for official curl images
 debian_base=docker.io/debian
 fedora_base=docker.io/fedora
 base=docker.io/alpine:3.22.2
@@ -83,16 +83,23 @@ feature-test:
 #
 #  > make image_name=localhost/curl:master scan
 #
+# Requires: grype trivy
+#
+# One way to install them:
+#   curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+#   curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo bash -s -- -b /usr/local/bin v0.32.0
+#
 scan:
 	podman save -o image.tar ${image_name}
 	# Run clamav on image.tar
 # 	freshclam
 	clamscan image.tar
 	# run grype on image.tar
-	curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin && grype image.tar
+	grype --version
+	grype image.tar
 	# run trivy on image.tar
 	systemctl --user enable --now podman.socket | true
-	curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo bash -s -- -b /usr/local/bin v0.32.0
+	trivy --version
 	trivy image --input image.tar
 	rm image.tar
 

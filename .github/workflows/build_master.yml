@@ -1,81 +1,84 @@
 name: build_master_images
-on:
+
+'on':
   schedule:
     - cron: '30 2 * * *'
   push:
     branches:
-    - main
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: true
 
 permissions: {}
-
-env:
-  REGISTRY_USER: ${{ github.actor }}
-  REGISTRY_PASSWORD: ${{ github.token }}
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
 
 jobs:
   build_master:
     if: ${{ github.repository_owner == 'curl' || github.event_name != 'schedule' }}
-    name: ${{ matrix.build.name }}
+    name: 'build_multi_master'
     runs-on: 'ubuntu-latest'
     permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        install_latest: [ true ]
+      packages: write  # To create/update container on ghcr.io
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-        with:
-          persist-credentials: false
-          ref: "main"
-      - name: Log in to ghcr.io
+      - name: 'login ghcr.io'
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         with:
-          username: ${{ env.REGISTRY_USER }}
-          password: ${{ env.REGISTRY_PASSWORD }}
-          registry: ${{ env.IMAGE_REGISTRY }}
-      - name: "login docker hub"
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+          registry: 'ghcr.io/${{ github.repository_owner }}'
+      - name: 'login docker hub'
+        env:
+          DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
+          DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
         run: |
-          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
-          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
-      - name: "login quay.io"
+          echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
+          echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
+      - name: 'login quay.io'
+        env:
+          QUAY_USER: '${{ secrets.QUAY_USER }}'
+          QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
         run: |
-          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
-          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
-      - run: |
-          sudo apt-get update
-          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
-        name: 'install dev deps'
-      - run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
-        name: 'build master images'
-      - run: buildah unshare make dist_name=localhost/curl release_tag=master test
-        name: 'test image'
-      - run: make image_name=localhost/curl:master scan
-        name: 'security scan image'
-      - run: |
+          echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
+          echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
+      - name: 'install dev deps'
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo apt-get -o Dpkg::Use-Pty=0 update
+          sudo rm -f /var/lib/man-db/auto-update
+          sudo apt-get -o Dpkg::Use-Pty=0 install -y \
+            qemu-user-static buildah less git make podman clamav clamav-freshclam
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        with:
+          persist-credentials: false
+          ref: 'main'
+      - name: 'build master images'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
+      - name: 'test image'
+        run: buildah unshare make dist_name=localhost/curl release_tag=master test
+      - name: 'install scan prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+      - name: 'security scan image'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          make image_name=localhost/curl:master scan
+      - name: 'push images to github registry'
+        run: |
           buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
           buildah push curl-base:master "docker://ghcr.io/curl/curl-container/curl-base:master"
           buildah push curl:master "docker://ghcr.io/curl/curl-container/curl:master"
-        name: 'push images to github registry'
-      - name: Install Cosign
+      - name: 'install Cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
-      - name: Write signing key to disk (only needed for `cosign sign --key`)
-        run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
-      - name: Sign image with a key
-        run: |
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev:master
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-base:master
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl:master
+      - name: 'sign image with a key'
         env:
-          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
-      - name: Write public key to disk
-        run: echo "${{ secrets.COSIGN_PUBLIC_KEY }}" > cosign.pub
-      - name: Verify image with public key
+          COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
+          COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
+        run: |
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /srv/stdin ghcr.io/curl/curl-container/curl-dev:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /srv/stdin ghcr.io/curl/curl-container/curl-base:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /srv/stdin ghcr.io/curl/curl-container/curl:master
+      - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev:master
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base:master
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl:master
-

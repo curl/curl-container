@@ -1,48 +1,95 @@
 name: build_ci_multi_images
-on:
+
+'on':
   pull_request:
-    types: [ opened, synchronize, reopened, labeled, unlabeled ]
+    types: [opened, synchronize, reopened, labeled, unlabeled]
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
 permissions: {}
 
-env:
-  REGISTRY_USER: ${{ github.actor }}
-  REGISTRY_PASSWORD: ${{ github.token }}
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
-
 jobs:
-  build_multi_ci:
-    name: ${{ matrix.build.name }}
+  verify_secrets_ghcr:
+    name: 'Verify credentials'
     runs-on: 'ubuntu-latest'
-    permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        install_latest: [ true ]
     steps:
-      - name: "login docker hub"
+      # upside: it logs out and aims to delete creds ~/.docker/config.json
+      # downside: extra dependency, uses -p instead of --password-stdin
+      - name: 'login ghcr.io (actor, via action)'
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
+        with:
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+          registry: 'ghcr.io/${{ github.repository_owner }}'
+
+      - name: 'login ghcr.io (actor, direct)'
+        env:
+          REGISTRY_USER: '${{ github.actor }}'
+          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
-          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
-      - name: "login quay.io"
+          podman --version
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          docker --version
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+
+      - name: 'login ghcr.io (repo owner, direct)'
+        env:
+          REGISTRY_USER: '${{ github.repository_owner }}'
+          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+          IMAGE_REGISTRY: 'ghcr.io/${{ github.repository_owner }}'
         run: |
-          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
-          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
-      - name: Checkout repository
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+          podman --version
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
+          docker --version
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
+
+  verify_secrets_registries:
+    name: 'Verify credentials (docker hub, quay)'
+    runs-on: 'ubuntu-latest'
+    if: ${{ github.secret_source == 'Actions' }}
+    steps:
+      - name: 'login docker hub'
+        env:
+          DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
+          DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
+        run: |
+          echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
+          echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
+
+      - name: 'login quay.io'
+        env:
+          QUAY_USER: '${{ secrets.QUAY_USER }}'
+          QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
+        run: |
+          echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
+          echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
+
+  build_multi_ci:
+    name: 'build_multi_ci'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'install dev deps'
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo apt-get -o Dpkg::Use-Pty=0 update
+          sudo rm -f /var/lib/man-db/auto-update
+          sudo apt-get -o Dpkg::Use-Pty=0 install -y \
+            qemu-user-static buildah less git make podman clamav clamav-freshclam
+
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           persist-credentials: false
-      - run: |
-          sudo apt-get update
-          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
-        name: 'install dev deps'
-      - run: buildah unshare make branch_or_ref=master release_tag=master multibuild
-        name: 'build multi image'
-      - run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
-        name: 'test image'
-      - run: make image_name=localhost/curl-multi:master scan
-        name: 'security scan image'
+      - name: 'build multi image'
+        run: buildah unshare make branch_or_ref=master release_tag=master multibuild
+      - name: 'test image'
+        run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
+      - name: 'install scan prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+      - name: 'security scan image'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          make image_name=localhost/curl-multi:master scan

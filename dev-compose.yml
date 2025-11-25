@@ -1,19 +1,17 @@
 version: '3'
 
 services:
-
-    buildah-service:
-      container_name: buildah-service
-      build:
-        context: .
-        dockerfile: Containerfile
-      image: buildah-service
-      privileged: true
-      stdin_open: true
-      tty: true
-      environment:
-        DEBUG: 1
-      volumes:
-        - $HOME/src/curl-container:/opt/app-root/src
-        - $HOME/src/curl:/opt/app-root/curl
-
+  buildah-service:
+    container_name: buildah-service
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: buildah-service
+    privileged: true
+    stdin_open: true
+    tty: true
+    environment:
+      DEBUG: 1
+    volumes:
+      - $HOME/src/curl-container:/opt/app-root/src
+      - $HOME/src/curl:/opt/app-root/curl
