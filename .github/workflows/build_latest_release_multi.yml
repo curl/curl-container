@@ -13,7 +13,7 @@ permissions: {}
 
 jobs:
   build_multi_latest_release_tag:
-    name: 'build_multi_master'
+    name: 'build_multi_latest_release_tag'
     runs-on: 'ubuntu-latest'
     permissions:
       packages: write  # To create/update container on ghcr.io
