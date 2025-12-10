@@ -71,7 +71,7 @@ jobs:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /srv/stdin ghcr.io/curl/curl-container/curl-dev-debian:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-dev-debian:master
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-debian:master
@@ -89,7 +89,7 @@ jobs:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /srv/stdin ghcr.io/curl/curl-container/curl-dev-fedora:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-dev-fedora:master
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-fedora:master
