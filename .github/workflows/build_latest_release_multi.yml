@@ -55,7 +55,7 @@ jobs:
 
       - name: 'login ghcr.io'
         env:
-          REGISTRY_USER: '${{ github.actor }}'
+          REGISTRY_USER: '${{ github.repository_owner }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
           echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
