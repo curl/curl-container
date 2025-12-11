@@ -39,7 +39,6 @@ jobs:
 
       - name: 'build debian dev image'
         run: buildah unshare make branch_or_ref=master release_tag=master build_debian
-
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -71,7 +70,6 @@ jobs:
 
       - name: 'build fedora dev image'
         run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
-
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
