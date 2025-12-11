@@ -51,6 +51,9 @@ jobs:
           sudo apt-get -o Dpkg::Use-Pty=0 install \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
 
+      - name: 'install prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
@@ -62,9 +65,6 @@ jobs:
       - name: 'test image'
         run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
 
-      - name: 'install scan prereqs'
-        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
-
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -75,18 +75,17 @@ jobs:
           buildah manifest push --all --format v2s2 localhost/curl-base-multi:master "docker://ghcr.io/curl/curl-container/curl-base-multi:master"
           buildah manifest push --all --format v2s2 localhost/curl-multi:master "docker://ghcr.io/curl/curl-container/curl-multi:master"
 
-      - name: 'install Cosign'
-        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
-
       - name: 'sign image with a key'
         env:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-multi:master
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-base-multi:master
 
       - name: 'verify image with public key'
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:master
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base-multi:master
