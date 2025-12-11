@@ -21,13 +21,6 @@ jobs:
     permissions:
       packages: write  # To create/update container on ghcr.io
     steps:
-      - name: 'login ghcr.io'
-        env:
-          REGISTRY_USER: '${{ github.actor }}'
-          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: |
-          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-
       - name: 'install dev deps'
         run: |
           sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
@@ -53,6 +46,13 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl:master scan
+
+      - name: 'login ghcr.io'
+        env:
+          REGISTRY_USER: '${{ github.actor }}'
+          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: |
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'push images to github registry'
         run: |
