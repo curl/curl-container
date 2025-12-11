@@ -17,16 +17,7 @@ jobs:
     name: 'Verify credentials'
     runs-on: 'ubuntu-latest'
     steps:
-      # upside: it logs out and aims to delete creds ~/.docker/config.json
-      # downside: extra dependency, uses -p instead of --password-stdin
-      - name: 'login ghcr.io (actor, via action)'
-        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
-        with:
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-          registry: 'ghcr.io/${{ github.repository_owner }}'
-
-      - name: 'login ghcr.io (actor, direct)'
+      - name: 'login ghcr.io (actor)'
         env:
           REGISTRY_USER: '${{ github.actor }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
@@ -36,7 +27,7 @@ jobs:
           docker --version
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
 
-      - name: 'login ghcr.io (repo owner, direct)'
+      - name: 'login ghcr.io (repo owner)'
         env:
           REGISTRY_USER: '${{ github.repository_owner }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
