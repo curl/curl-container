@@ -72,9 +72,9 @@ jobs:
 
       - name: 'push images to github registry'
         run: |
-          buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
+          buildah push curl-dev:master  "docker://ghcr.io/curl/curl-container/curl-dev:master"
           buildah push curl-base:master "docker://ghcr.io/curl/curl-container/curl-base:master"
-          buildah push curl:master "docker://ghcr.io/curl/curl-container/curl:master"
+          buildah push curl:master      "docker://ghcr.io/curl/curl-container/curl:master"
 
       - name: 'sign image with a key'
         env:

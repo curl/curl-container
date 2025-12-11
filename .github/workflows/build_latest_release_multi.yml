@@ -78,7 +78,7 @@ jobs:
 
       - name: 'push images to github registry'
         run: |
-          buildah manifest push --format v2s2 --all curl-multi:"$REL" docker://ghcr.io/curl/curl-container/curl-multi:"$REL"
+          buildah manifest push --format v2s2 --all curl-multi:"$REL"      docker://ghcr.io/curl/curl-container/curl-multi:"$REL"
           buildah manifest push --format v2s2 --all curl-base-multi:"$REL" docker://ghcr.io/curl/curl-container/curl-base-multi:"$REL"
 
       - name: 'sign images with sigstore key'
@@ -98,8 +98,8 @@ jobs:
 
       - name: 'push release to docker hub'
         run: |
-          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://docker.io/curlimages/curl:"$REL"
-          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://docker.io/curlimages/curl:latest
+          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL"      docker://docker.io/curlimages/curl:"$REL"
+          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL"      docker://docker.io/curlimages/curl:latest
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://docker.io/curlimages/curl-base:"$REL"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://docker.io/curlimages/curl-base:latest
 
@@ -124,8 +124,8 @@ jobs:
 
       - name: 'push release to quay.io'
         run: |
-          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://quay.io/curl/curl:"$REL"
-          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://quay.io/curl/curl:latest
+          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL"      docker://quay.io/curl/curl:"$REL"
+          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL"      docker://quay.io/curl/curl:latest
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://quay.io/curl/curl-base:"$REL"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://quay.io/curl/curl-base:latest
 
