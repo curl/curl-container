@@ -27,6 +27,7 @@ jobs:
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
           registry: 'ghcr.io/${{ github.repository_owner }}'
+
       - name: 'login docker hub'
         env:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
@@ -34,6 +35,7 @@ jobs:
         run: |
           echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
           echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
+
       - name: 'login quay.io'
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
@@ -41,33 +43,42 @@ jobs:
         run: |
           echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
           echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
+
       - name: 'install dev deps'
         run: |
           sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
           sudo apt-get -o Dpkg::Use-Pty=0 update
           sudo apt-get -o Dpkg::Use-Pty=0 install \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
           ref: 'main'
+
       - name: 'build master images'
         run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
+
       - name: 'test image'
         run: buildah unshare make dist_name=localhost/curl release_tag=master test
+
       - name: 'install scan prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl:master scan
+
       - name: 'push images to github registry'
         run: |
           buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
           buildah push curl-base:master "docker://ghcr.io/curl/curl-container/curl-base:master"
           buildah push curl:master "docker://ghcr.io/curl/curl-container/curl:master"
+
       - name: 'install Cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+
       - name: 'sign image with a key'
         env:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
@@ -76,6 +87,7 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-dev:master
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-base:master
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl:master
+
       - name: 'verify image with public key'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev:master
