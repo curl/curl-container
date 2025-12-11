@@ -24,7 +24,6 @@ jobs:
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
           echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'login docker hub'
         env:
