@@ -23,11 +23,13 @@ jobs:
       packages: write  # To create/update container on ghcr.io
     steps:
       - name: 'login ghcr.io'
-        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
-        with:
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-          registry: 'ghcr.io/${{ github.repository_owner }}'
+        env:
+          REGISTRY_USER: '${{ github.actor }}'
+          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: |
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+
       - name: 'login docker hub'
         env:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
