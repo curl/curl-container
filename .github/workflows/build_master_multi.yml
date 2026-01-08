@@ -45,7 +45,7 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-multi:master scan
 
-      - name: 'login ghcr.io'
+      - name: 'login (ghcr.io)'
         env:
           REGISTRY_USER: '${{ github.actor }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
