@@ -99,12 +99,6 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl:latest
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl-base:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl-base:latest
-      - name: 'verify image with public key'
-        run: |
-          cosign verify --key cosign.pub docker.io/curlimages/curl:"$REL"
-          cosign verify --key cosign.pub docker.io/curlimages/curl:latest
-          cosign verify --key cosign.pub docker.io/curlimages/curl-base:"$REL"
-          cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
       - name: 'push release to quay.io'
         run: |
           buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://quay.io/curl/curl:"$REL"
@@ -120,7 +114,13 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl:latest
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:latest
-      - name: 'verify image with public key'
+      - name: 'verify docker image with public key'
+        run: |
+          cosign verify --key cosign.pub docker.io/curlimages/curl:"$REL"
+          cosign verify --key cosign.pub docker.io/curlimages/curl:latest
+          cosign verify --key cosign.pub docker.io/curlimages/curl-base:"$REL"
+          cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
+      - name: 'verify quay image with public key'
         run: |
           cosign verify --key cosign.pub quay.io/curl/curl:"$REL"
           cosign verify --key cosign.pub quay.io/curl/curl:latest
