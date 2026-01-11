@@ -43,9 +43,8 @@ jobs:
           echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
       - name: 'install dev deps'
         run: |
-          sudo rm -f /etc/apt/sources.list.d/microsoft-prod.list
+          sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
           sudo apt-get -o Dpkg::Use-Pty=0 update
-          sudo rm -f /var/lib/man-db/auto-update
           sudo apt-get -o Dpkg::Use-Pty=0 install -y \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
