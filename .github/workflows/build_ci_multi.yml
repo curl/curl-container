@@ -17,14 +17,15 @@ jobs:
     name: 'Verify credentials'
     runs-on: 'ubuntu-latest'
     steps:
+      - name: 'versions'
+        run: podman --version; docker --version
+
       - name: 'login (ghcr.io) as actor'
         env:
           REGISTRY_USER: '${{ github.actor }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          podman --version
           echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
-          docker --version
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'logout (ghcr.io)'
@@ -37,9 +38,7 @@ jobs:
           REGISTRY_USER: '${{ github.repository_owner }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
-          podman --version
           echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
-          docker --version
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'logout (ghcr.io)'
@@ -91,6 +90,9 @@ jobs:
 
       - name: 'install prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
+
+      - name: 'versions'
+        run: podman --version; docker --version; cosign version
 
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
