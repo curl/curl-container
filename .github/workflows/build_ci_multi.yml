@@ -23,21 +23,21 @@ jobs:
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
           podman --version
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           docker --version
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
 
       - name: 'logout (ghcr.io)'
         run: |
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           docker logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
 
       - name: 'login (ghcr.io) as repo owner'
         env:
@@ -51,11 +51,11 @@ jobs:
 
       - name: 'logout (ghcr.io)'
         run: |
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           docker logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
 
   verify_secrets_registries:
     name: 'Verify credentials (docker hub, quay)'
@@ -67,19 +67,19 @@ jobs:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
           DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
         run: |
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
 
       - name: 'logout (docker.io)'
         run: |
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           podman logout docker.io
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           docker logout
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
 
       - name: 'login (quay.io)'
         env:
@@ -91,11 +91,11 @@ jobs:
 
       - name: 'logout (quay.io)'
         run: |
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           podman logout quay.io
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
           docker logout quay.io
-          ls -l "$HOME"/.docker/config.json || true; "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+          ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
 
   build_multi_ci:
     name: 'build_multi_ci'
