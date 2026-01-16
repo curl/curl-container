@@ -49,7 +49,7 @@ jobs:
         env:
           REGISTRY_USER: '${{ github.actor }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+        run: echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'push images to github registry'
         run: buildah push curl-dev-debian:master "docker://ghcr.io/curl/curl-container/curl-dev-debian:master"
@@ -92,4 +92,4 @@ jobs:
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-fedora:master
 
       - name: 'logout (ghcr.io)'
-        run: podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+        run: podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"

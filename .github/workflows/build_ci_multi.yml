@@ -23,14 +23,14 @@ jobs:
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
           podman --version
-          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
           docker --version
-          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'logout (ghcr.io)'
         run: |
-          podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          docker logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+          docker logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'login (ghcr.io) as repo owner'
         env:
@@ -38,14 +38,14 @@ jobs:
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         run: |
           podman --version
-          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
           docker --version
-          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'logout (ghcr.io)'
         run: |
-          podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
-          docker logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+          docker logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
   verify_secrets_registries:
     name: 'Verify credentials (docker hub, quay)'

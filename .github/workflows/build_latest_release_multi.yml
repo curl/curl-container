@@ -53,11 +53,12 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-multi:"$REL" scan
 
+
       - name: 'login (ghcr.io)'
         env:
           REGISTRY_USER: '${{ github.actor }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+        run: echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'push images to github registry (ghcr.io)'
         run: |
@@ -74,7 +75,8 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-base-multi:"$REL"
 
       - name: 'logout (ghcr.io)'
-        run: podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+        run: podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+
 
       - name: 'login (docker.io)'
         env:
@@ -107,6 +109,7 @@ jobs:
           podman logout docker.io
           docker logout
 
+
       - name: 'login (quay.io)'
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
@@ -137,6 +140,7 @@ jobs:
         run: |
           podman logout quay.io
           docker logout quay.io
+
 
       - name: 'verify image with public key (ghcr.io)'
         run: |
