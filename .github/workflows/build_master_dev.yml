@@ -90,3 +90,6 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-fedora:master
+
+      - name: 'logout (ghcr.io)'
+        run: podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"

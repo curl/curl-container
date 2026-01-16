@@ -67,6 +67,9 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-multi:master
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-base-multi:master
 
+      - name: 'logout (ghcr.io)'
+        run: podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+
       - name: 'verify image with public key'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
