@@ -42,6 +42,11 @@ jobs:
       - name: 'install prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
 
+      - name: 'versions'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          podman --version; docker --version; cosign version
+
       - name: 'build multi image'
         run: buildah unshare make branch_or_ref="$TAG_REF" release_tag="$REL" multibuild
 
