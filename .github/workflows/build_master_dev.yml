@@ -39,6 +39,7 @@ jobs:
 
       - name: 'build debian dev image'
         run: buildah unshare make branch_or_ref=master release_tag=master build_debian
+
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -48,12 +49,10 @@ jobs:
         env:
           REGISTRY_USER: '${{ github.actor }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: |
-          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+        run: echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'push images to github registry'
-        run: |
-          buildah push curl-dev-debian:master "docker://ghcr.io/curl/curl-container/curl-dev-debian:master"
+        run: buildah push curl-dev-debian:master "docker://ghcr.io/curl/curl-container/curl-dev-debian:master"
 
       - name: 'sign image with a key'
         env:
@@ -70,14 +69,14 @@ jobs:
 
       - name: 'build fedora dev image'
         run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
+
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-dev-fedora:master scan
 
       - name: 'push images to github registry'
-        run: |
-          buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
+        run: buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
 
       - name: 'sign image with a key'
         env:

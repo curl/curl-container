@@ -78,8 +78,10 @@ jobs:
 
       - name: 'build multi image'
         run: buildah unshare make branch_or_ref=master release_tag=master multibuild
+
       - name: 'test image'
         run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
+
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
