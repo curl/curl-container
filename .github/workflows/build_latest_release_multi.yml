@@ -133,7 +133,7 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:latest
 
-      - name: 'logout (docker.io)'
+      - name: 'logout (quay.io)'
         run: |
           podman logout quay.io
           docker logout quay.io
