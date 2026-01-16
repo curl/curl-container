@@ -27,6 +27,11 @@ jobs:
           docker --version
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
 
+      - name: 'logout (ghcr.io)'
+        run: |
+          podman logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+          docker logout "ghcr.io/${GITHUB_REPOSITORY_OWNER}"
+
       - name: 'login (ghcr.io) as repo owner'
         env:
           REGISTRY_USER: '${{ github.repository_owner }}'
