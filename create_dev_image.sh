@@ -77,7 +77,7 @@ fi
 
 # build curl
 buildah run $bdr autoreconf -fi
-buildah run $bdr ./configure ${build_opts}
+buildah run $bdr ./configure --disable-dependency-tracking ${build_opts}
 buildah run $bdr make -j$(nproc)
 
 # run tests
@@ -88,10 +88,6 @@ fi
 # install curl in /build
 buildah run $bdr make DESTDIR="/build/" install  -j$(nproc)
 
-# install useful dev deps¡
-buildah run $bdr python3 -m ensurepip
-#buildah run $bdr pip3 --no-input install -r ./requirements.txt
-
 # label image
 buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" $bdr
 buildah config --label org.opencontainers.image.description="minimal dev image for curl" $bdr
@@ -99,4 +95,3 @@ buildah config --label org.opencontainers.image.licenses="MIT" $bdr
 
 # commit image
 buildah commit $bdr "${image_name}" # --disable-compression false --squash --sign-by --tls-verify
-

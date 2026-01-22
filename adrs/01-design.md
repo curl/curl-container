@@ -28,9 +28,9 @@ Using [buildah](https://buildah.io/), we can create reusable and parameterised s
 container images.
 
 ```commandline
-├─ dev image: instant development image.
-│  ├─ base image: curl base image to be used in docker inheritance.
-│  │  ├─ curl image: curl 'appliance' image.
++- dev image: instant development image.
+|  +- base image: curl base image to be used in docker inheritance.
+|  |  +- curl image: curl 'appliance' image.
 ```
 
 Where the dev image can be used as an 'instant' development environment for building curl. The base image is intended

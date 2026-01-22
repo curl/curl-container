@@ -6,35 +6,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.18.0] - 2026-01-08
+### Changed
+- bump to curl 8.18.0
+- bump to alpine 3.23.0
 
-## [8.15.0] - 2025-16-07
+## [8.17.0] - 2025-11-05
+### Changed
+- bump to curl 8.17.0
+- bump to alpine 3.22.2
+
+## [8.16.0] - 2025-09-12
+### Changed
+- bump to curl 8.16.0
+
+## [8.15.0] - 2025-07-16
 ### Changed
 - bump to curl 8.15.0
 - bump to alpine 3.22.1
 
-## [8.14.1] - 2025-15-06
+## [8.14.1] - 2025-06-15
 ### Changed
-- bump to curl 8.14.1 
+- bump to curl 8.14.1
 - bump to alpine 3.22.0
-- 
-## [8.13.0] - 2025-05-04
-### Changed
-- bump to curl 8.13.0 
-- bump to alpine:3.21.3
 
-## [8.12.1] - 2025-13-02
+## [8.13.0] - 2025-04-05
+### Changed
+- bump to curl 8.13.0
+- bump to alpine 3.21.3
+
+## [8.12.1] - 2025-02-13
 ### Changed
 - bump to curl 8.12.1
 
-## [8.12.0] - 2025-05-02
+## [8.12.0] - 2025-02-05
 ### Changed
 - bump to curl 8.12.0
-- bump to alpine:3.21.2
+- bump to alpine 3.21.2
 
 ## [8.11.1] - 2024-12-11
 ### Changed
 - bump to curl 8.11.1
-- bump to alpine:3.21.0
+- bump to alpine 3.21.0
 
 ## [8.11.0] - 2024-11-06
 ### Changed
@@ -47,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.10.0] - 2024-09-11
 ### Changed
 - bump to curl 8.10.0
-- bump to alpine:3.20.3
+- bump to alpine 3.20.3
 
 ## [8.9.1] - 2024-07-30
 ### Changed
@@ -71,7 +84,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bump to curl 8.6.0
 - bump to alpine 3.19.1
 
-
 ## [8.5.0-1] - 2023-01-19
 ### Changed
 - add libpsl
@@ -92,7 +104,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - bump to curl 8.3.0
 - bump to alpine 3.18.3
-
 
 ## [8.2.1] - 2023-07-26
 ### Changed
@@ -120,7 +131,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - fix entrypoint perms
 
 ## [8.1.2-2] - 2023-06-08
-### Added 
+### Added
 - curl-dev-fedora:master
 - curl-dev-debian:master
 ### Changed
@@ -137,4 +148,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - created [curl-container repo](https://github.com/curl/curl-container/pull/1)
 ### Changed
-- generate [curl:8.1.2 release](https://github.com/curl/curl/releases/tag/curl-8_1_2) images on [alpine 3.18.0](https://alpinelinux.org/posts/Alpine-3.18.0-released.html) 
+- generate [curl:8.1.2 release](https://github.com/curl/curl/releases/tag/curl-8_1_2) images on [alpine 3.18.0](https://alpinelinux.org/posts/Alpine-3.18.0-released.html)

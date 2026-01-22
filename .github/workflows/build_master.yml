@@ -1,77 +1,85 @@
 name: build_master_images
-on:
+
+'on':
   schedule:
-    - cron: '30 2 * * * '
+    - cron: '30 2 * * *'
   push:
     branches:
-    - main
+      - main
 
-env:
-  REGISTRY_USER: ${{ github.actor }}
-  REGISTRY_PASSWORD: ${{ github.token }}
-  IMAGE_REGISTRY: ghcr.io/${{ github.repository_owner }}
+concurrency:
+  group: ${{ github.workflow }}-${{ github.sha }}
+  cancel-in-progress: true
+
+permissions: {}
 
 jobs:
   build_master:
-    name: ${{ matrix.build.name }}
+    if: ${{ github.repository_owner == 'curl' || github.event_name != 'schedule' }}
+    name: 'build_master'
     runs-on: 'ubuntu-latest'
     permissions:
-      contents: read
-      packages: write
-    strategy:
-      fail-fast: false
-      matrix:
-        install_latest: [ true ]
+      packages: write  # To create/update container on ghcr.io
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          ref: "main"
-      - name: Log in to ghcr.io
-        uses: redhat-actions/podman-login@v1
-        with:
-          username: ${{ env.REGISTRY_USER }}
-          password: ${{ env.REGISTRY_PASSWORD }}
-          registry: ${{ env.IMAGE_REGISTRY }}
-      - name: "login docker hub"
+      - name: 'install dev deps'
         run: |
-          podman login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}} docker.io
-          docker login -u ${{secrets.DOCKER_HUB_USER}} -p ${{secrets.DOCKER_HUB_TOKEN}}
-      - name: "login quay.io"
-        run: |
-          podman login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
-          docker login -u ${{secrets.QUAY_USER}} -p ${{secrets.QUAY_TOKEN}} quay.io
-      - run: |
-          sudo apt-get update
-          sudo apt-get -y install qemu-user-static buildah less git make podman clamav clamav-freshclam
-        name: 'install dev deps'
-      - run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
-        name: 'build master images'
-      - run: buildah unshare make dist_name=localhost/curl release_tag=master test
-        name: 'test image'
-      - run: make image_name=localhost/curl:master scan
-        name: 'security scan image'
-      - run: |
-          buildah push curl-dev:master "docker://ghcr.io/curl/curl-container/curl-dev:master"
-          buildah push curl-base:master "docker://ghcr.io/curl/curl-container/curl-base:master"
-          buildah push curl:master "docker://ghcr.io/curl/curl-container/curl:master"
-        name: 'push images to github registry'
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@main
-      - name: Write signing key to disk (only needed for `cosign sign --key`)
-        run: echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > cosign.key
-      - name: Sign image with a key
-        run: |
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-dev:master
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl-base:master
-          cosign sign -y --key cosign.key ghcr.io/curl/curl-container/curl:master
-        env:
-          COSIGN_PASSWORD: ${{secrets.COSIGN_PASSWORD}}
-      - name: Write public key to disk
-        run: echo "${{ secrets.COSIGN_PUBLIC_KEY }}" > cosign.pub
-      - name: Verify image with public key
-        run: |
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev:master
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base:master
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl:master
+          sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
+          sudo apt-get -o Dpkg::Use-Pty=0 update
+          sudo apt-get -o Dpkg::Use-Pty=0 install \
+            qemu-user-static buildah less git make podman clamav clamav-freshclam
 
+      - name: 'install prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
+
+      - name: 'versions'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          podman --version; docker --version; cosign version
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+          ref: 'main'
+
+      - name: 'build master images'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
+
+      - name: 'test image'
+        run: buildah unshare make dist_name=localhost/curl release_tag=master test
+
+      - name: 'security scan image'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          make image_name=localhost/curl:master scan
+
+      - name: 'login (ghcr.io)'
+        env:
+          REGISTRY_USER: '${{ github.actor }}'
+          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+
+      - name: 'push images to github registry (ghcr.io)'
+        run: |
+          buildah push curl-dev:master  docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
+          buildah push curl-base:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base:master
+          buildah push curl:master      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl:master
+
+      - name: 'sign image with a key (ghcr.io)'
+        env:
+          COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
+          COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-base:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl:master
+
+      - name: 'logout (ghcr.io)'
+        run: podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+
+      - name: 'verify image with public key (ghcr.io)'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-base:master
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl:master

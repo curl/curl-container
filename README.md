@@ -84,10 +84,10 @@ Platform specific dev images built daily:
 * **curl-dev-debian:master** - debian based development environment
 * **curl-dev-fedora:master** - fedora based development environment
 
-To use any of these development images;
+To use any of these development images:
 
 ```shell
-podman run -it -v /Users/exampleuser/src/curl:/src/curl  ghcr.io/curl/curl-container/curl-dev-debian:master zsh
+podman run -it -v /Users/exampleuser/src/curl:/src/curl ghcr.io/curl/curl-container/curl-dev-debian:master zsh
 ./buildconf
 ./configure
 make
