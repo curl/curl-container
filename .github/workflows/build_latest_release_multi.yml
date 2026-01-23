@@ -18,36 +18,41 @@ jobs:
     permissions:
       packages: write  # To create/update container on ghcr.io
     steps:
-      - name: 'login ghcr.io'
+      - name: 'login (ghcr.io)'
         uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
         with:
           username: '${{ github.actor }}'
           password: '${{ secrets.GITHUB_TOKEN }}'
           registry: 'ghcr.io/${{ github.repository_owner }}'
-      - name: 'login docker hub'
+
+      - name: 'login (docker.io)'
         env:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
           DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
         run: |
           echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
           echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
-      - name: 'login quay.io'
+
+      - name: 'login (quay.io)'
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
           QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
         run: |
           echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
           echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
+
       - name: 'install dev deps'
         run: |
           sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
           sudo apt-get -o Dpkg::Use-Pty=0 update
           sudo apt-get -o Dpkg::Use-Pty=0 install \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
           tag_name: ${{ github.ref }}
+
       - name: 'set env vars'
         run: |
           release_tag_redirect=$(curl -s https://github.com/curl/curl/releases/latest -w'%{redirect_url}\n' -o /dev/null)
@@ -56,40 +61,50 @@ jobs:
           rel=${latest_release_ref:5}
           release_image_tag="${rel//_/.}"
           echo "REL=$release_image_tag" >> "$GITHUB_ENV"
+
       - name: 'build multi image'
         run: buildah unshare make branch_or_ref="$TAG_REF" release_tag="$REL" multibuild
+
       - name: 'test image'
         run: buildah unshare make dist_name=localhost/curl-multi release_tag="$REL" test
+
       - name: 'install scan prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-multi:"$REL" scan
-      - name: 'push images to github registry'
+
+      - name: 'push images (ghcr.io)'
         run: |
           buildah manifest push --format v2s2 --all curl-multi:"$REL" docker://ghcr.io/curl/curl-container/curl-multi:"$REL"
           buildah manifest push --format v2s2 --all curl-base-multi:"$REL" docker://ghcr.io/curl/curl-container/curl-base-multi:"$REL"
-      - name: 'install Cosign'
+
+      - name: 'install cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
-      - name: 'sign images with sigstore key'
+
+      - name: 'sign images with sigstore key (ghcr.io)'
         env:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-multi:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-base-multi:"$REL"
-      - name: 'verify image with public key'
+
+      - name: 'verify images with public key (ghcr.io)'
         run: |
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:"$REL"
           cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base-multi:"$REL"
-      - name: 'push release to docker hub'
+
+      - name: 'push images (docker.io)'
         run: |
           buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://docker.io/curlimages/curl:"$REL"
           buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://docker.io/curlimages/curl:latest
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://docker.io/curlimages/curl-base:"$REL"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://docker.io/curlimages/curl-base:latest
-      - name: 'sign images with a sigstore key'
+
+      - name: 'sign images with sigstore key (docker.io)'
         env:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
@@ -98,13 +113,15 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl:latest
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl-base:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl-base:latest
-      - name: 'push release to quay.io'
+
+      - name: 'push images (quay.io)'
         run: |
           buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://quay.io/curl/curl:"$REL"
           buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL" docker://quay.io/curl/curl:latest
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://quay.io/curl/curl-base:"$REL"
           buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://quay.io/curl/curl-base:latest
-      - name: 'sign images with a sigstore key'
+
+      - name: 'sign images with sigstore key (quay.io)'
         env:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
@@ -113,13 +130,15 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl:latest
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:latest
-      - name: 'verify docker image with public key'
+
+      - name: 'verify images with public key (docker.io)'
         run: |
           cosign verify --key cosign.pub docker.io/curlimages/curl:"$REL"
           cosign verify --key cosign.pub docker.io/curlimages/curl:latest
           cosign verify --key cosign.pub docker.io/curlimages/curl-base:"$REL"
           cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
-      - name: 'verify quay image with public key'
+
+      - name: 'verify images with public key (quay.io)'
         run: |
           cosign verify --key cosign.pub quay.io/curl/curl:"$REL"
           cosign verify --key cosign.pub quay.io/curl/curl:latest
