@@ -131,16 +131,16 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:latest
 
-      - name: 'verify images with public key (docker.io)'
-        run: |
-          cosign verify --key cosign.pub docker.io/curlimages/curl:"$REL"
-          cosign verify --key cosign.pub docker.io/curlimages/curl:latest
-          cosign verify --key cosign.pub docker.io/curlimages/curl-base:"$REL"
-          cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
-
       - name: 'verify images with public key (quay.io)'
         run: |
           cosign verify --key cosign.pub quay.io/curl/curl:"$REL"
           cosign verify --key cosign.pub quay.io/curl/curl:latest
           cosign verify --key cosign.pub quay.io/curl/curl-base:"$REL"
           cosign verify --key cosign.pub quay.io/curl/curl-base:latest
+
+      - name: 'verify images with public key (docker.io)'
+        run: |
+          cosign verify --key cosign.pub docker.io/curlimages/curl:"$REL"
+          cosign verify --key cosign.pub docker.io/curlimages/curl:latest
+          cosign verify --key cosign.pub docker.io/curlimages/curl-base:"$REL"
+          cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
