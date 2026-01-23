@@ -139,6 +139,7 @@ jobs:
           cosign verify --key cosign.pub quay.io/curl/curl-base:latest
 
       - name: 'verify images with public key (docker.io)'
+        # Seen flaky with 'Error: no signatures found' (with cosign v3.0.2). Do it last to let other steps finish.
         run: |
           cosign verify --key cosign.pub docker.io/curlimages/curl:"$REL"
           cosign verify --key cosign.pub docker.io/curlimages/curl:latest
