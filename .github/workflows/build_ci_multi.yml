@@ -41,10 +41,9 @@ jobs:
         env:
           REGISTRY_USER: '${{ github.repository_owner }}'
           REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          IMAGE_REGISTRY: 'ghcr.io/${{ github.repository_owner }}'
         run: |
-          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
-          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin "${IMAGE_REGISTRY}"
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
   verify_secrets_registries:
     name: 'Verify credentials (docker.io, quay.io)'
