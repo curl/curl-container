@@ -72,9 +72,9 @@ jobs:
 
       - name: 'push images (ghcr.io)'
         run: |
-          buildah push curl-dev:master  "docker://ghcr.io/curl/curl-container/curl-dev:master"
-          buildah push curl-base:master "docker://ghcr.io/curl/curl-container/curl-base:master"
-          buildah push curl:master      "docker://ghcr.io/curl/curl-container/curl:master"
+          buildah push curl-dev:master  docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
+          buildah push curl-base:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base:master
+          buildah push curl:master      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl:master
 
       - name: 'install cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
@@ -84,12 +84,12 @@ jobs:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-dev:master
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-base:master
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-base:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl:master
 
       - name: 'verify images with public key (ghcr.io)'
         run: |
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev:master
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base:master
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl:master
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-base:master
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl:master

@@ -70,7 +70,7 @@ jobs:
 
       - name: 'push images (ghcr.io)'
         run: |
-          buildah push curl-dev-debian:master "docker://ghcr.io/curl/curl-container/curl-dev-debian:master"
+          buildah push curl-dev-debian:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
 
       - name: 'install cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
@@ -80,11 +80,11 @@ jobs:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-dev-debian:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
 
       - name: 'verify images with public key (ghcr.io)'
         run: |
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-debian:master
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
 
       - name: 'build fedora dev image'
         run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
@@ -95,15 +95,15 @@ jobs:
           make image_name=localhost/curl-dev-fedora:master scan
 
       - name: 'push images (ghcr.io)'
-        run: buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
+        run: buildah push curl-dev-fedora:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
 
       - name: 'sign images with sigstore key (ghcr.io)'
         env:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-dev-fedora:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
 
       - name: 'verify images with public key (ghcr.io)'
         run: |
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-dev-fedora:master
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master

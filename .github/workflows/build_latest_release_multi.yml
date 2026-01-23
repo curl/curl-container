@@ -78,8 +78,8 @@ jobs:
 
       - name: 'push images (ghcr.io)'
         run: |
-          buildah manifest push --format v2s2 --all curl-multi:"$REL"      docker://ghcr.io/curl/curl-container/curl-multi:"$REL"
-          buildah manifest push --format v2s2 --all curl-base-multi:"$REL" docker://ghcr.io/curl/curl-container/curl-base-multi:"$REL"
+          buildah manifest push --format v2s2 --all curl-multi:"$REL"      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
+          buildah manifest push --format v2s2 --all curl-base-multi:"$REL" docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
 
       - name: 'install cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
@@ -89,13 +89,13 @@ jobs:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-multi:"$REL"
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/curl/curl-container/curl-base-multi:"$REL"
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
 
       - name: 'verify images with public key (ghcr.io)'
         run: |
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-multi:"$REL"
-          cosign verify --key cosign.pub ghcr.io/curl/curl-container/curl-base-multi:"$REL"
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
 
       - name: 'push images (docker.io)'
         run: |
