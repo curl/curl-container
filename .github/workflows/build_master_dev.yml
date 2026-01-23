@@ -75,7 +75,7 @@ jobs:
       - name: 'install cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
 
-      - name: 'sign images with a key (ghcr.io)'
+      - name: 'sign images with sigstore key (ghcr.io)'
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
