@@ -17,6 +17,9 @@ jobs:
     name: 'Verify credentials'
     runs-on: 'ubuntu-latest'
     steps:
+      - name: 'versions'
+        run: podman --version; docker --version
+
       # upside: it logs out and aims to delete creds ~/.docker/config.json
       # downside: extra dependency, uses -p instead of --password-stdin
       - name: 'login (ghcr.io) as actor, via action'
