@@ -77,6 +77,60 @@ jobs:
           podman logout quay.io
           docker logout quay.io
 
+  build_ci:
+    name: 'build_ci'
+    runs-on: 'ubuntu-latest'
+    permissions:
+      packages: write  # To create/update container on ghcr.io
+    steps:
+      - name: 'install dev deps'
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
+          sudo apt-get -o Dpkg::Use-Pty=0 update
+          sudo apt-get -o Dpkg::Use-Pty=0 install \
+            qemu-user-static buildah less git make podman
+
+      - name: 'install prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
+
+      - name: 'versions'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          podman --version; docker --version; cosign version
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+          ref: 'main'
+
+      - name: 'build debian dev image'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_debian
+
+      - name: 'login (ghcr.io)'
+        env:
+          REGISTRY_USER: '${{ github.actor }}'
+          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+
+      - name: 'push images to github registry'
+        run: buildah push curl-ci-test:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-ci-test:master
+
+      - name: 'sign image with a key'
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-ci-test:master
+
+      - name: 'verify image with public key'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-ci-test:master
+
+      - name: 'logout (ghcr.io)'
+        run: podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+
   build_multi_ci:
     name: 'build_multi_ci'
     runs-on: 'ubuntu-latest'
