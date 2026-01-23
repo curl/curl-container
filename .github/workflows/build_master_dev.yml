@@ -95,8 +95,7 @@ jobs:
           make image_name=localhost/curl-dev-fedora:master scan
 
       - name: 'push images (ghcr.io)'
-        run: |
-          buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
+        run: buildah push curl-dev-fedora:master "docker://ghcr.io/curl/curl-container/curl-dev-fedora:master"
 
       - name: 'sign images with sigstore key (ghcr.io)'
         env:
