@@ -26,7 +26,7 @@ image_name=${7}
 run_tests=${8}
 
 # set base and platform
-if [[ -n $platform ]]; then
+if [[ -n "${platform}" ]]; then
   echo "creating with platform=${platform}"
   bdr=$(buildah --platform "${platform}" from "${dist}")
 else
