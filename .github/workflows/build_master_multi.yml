@@ -60,7 +60,7 @@ jobs:
           echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
-      - name: 'push multi images (ghcr.io)'
+      - name: 'push images (ghcr.io)'
         run: |
           buildah manifest push --all --format v2s2 localhost/curl-multi:master      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:master
           buildah manifest push --all --format v2s2 localhost/curl-base-multi:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:master
