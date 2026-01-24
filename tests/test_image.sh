@@ -25,8 +25,7 @@ ctrmnt=$(buildah mount "$ctr")
 
 if [[ "$dist" = *'-dev-'* ]]; then
   # test running curl
-  export LD_LIBRARY_PATH="/build/usr/local/lib:$LD_LIBRARY_PATH"
-  buildah run "$ctr" /build/usr/local/bin/curl -V
+  buildah run --env LD_LIBRARY_PATH=/build/usr/local/lib "$ctr" /build/usr/local/bin/curl -V
 else
   # check file exists
   if [[ ! -f "$ctrmnt/usr/bin/curl" ]]; then
