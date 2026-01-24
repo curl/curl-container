@@ -8,7 +8,7 @@ fedora_base=docker.io/fedora
 base=docker.io/alpine:3.23.0
 arch=""
 compiler="gcc"
-dev_deps="git zsh curl build-base libtool autoconf automake perl libssh2 libssh2-dev libssh2-static openssl python3 python3-dev nghttp2 brotli brotli-dev krb5-dev libpsl-dev zstd"
+dev_deps="git zsh curl build-base libtool autoconf automake perl openssl libssh2 libssh2-dev libssh2-static brotli brotli-dev zstd krb5-dev libpsl-dev python3 python3-dev stunnel nghttp2"
 base_deps="brotli brotli-dev libssh2 nghttp2-dev libidn2 krb5 libpsl zstd"
 build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2 --with-gssapi"
 
@@ -20,8 +20,8 @@ build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -
 #
 build_debian:
 	./create_dev_image.sh ${arch} ${debian_base} ${compiler} \
-	  "git zsh curl gcc libtool autoconf automake make perl libssl-dev libssh2-1 libssh2-1-dev libnghttp2-dev libbrotli-dev libzstd-dev libidn2-dev ibkrb5-dev libpsl-dev" \
-	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2 --with-gssapi" \
+	  "git zsh curl gcc libtool autoconf automake make perl libssl-dev libssh2-1 libssh2-1-dev libnghttp2-dev libbrotli-dev libzstd-dev libidn2-dev ibkrb5-dev libpsl-dev cargo python3-pip python3-dev stunnel nghttp2" \
+	  "--disable-ldap --enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2 --with-gssapi" \
 	  ${branch_or_ref} curl-dev-debian:${release_tag}
 
 ##############################################
@@ -32,8 +32,8 @@ build_debian:
 #
 build_fedora:
 	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} \
-	  "git zsh curl gcc libtool perl openssl-devel libssh2-devel libnghttp2-devel brotli-devel libzstd-devel libidn2-devel krb5-devel libpsl-devel" \
-	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2 --with-gssapi" \
+	  "git zsh curl gcc libtool perl openssl-devel libssh2-devel libnghttp2-devel brotli-devel libzstd-devel libidn2-devel krb5-devel libpsl-devel cargo python3-pip python3-devel stunnel nghttp2" \
+	  "--disable-ldap --enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2 --with-gssapi" \
 	  ${branch_or_ref} curl-dev-fedora:${release_tag}
 
 ##############################################
