@@ -13,7 +13,7 @@ concurrency:
 permissions: {}
 
 jobs:
-  verify_secrets_ghcr:
+  verify_secrets:
     name: 'Verify credentials'
     runs-on: 'ubuntu-latest'
     steps:
@@ -33,12 +33,8 @@ jobs:
           podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
           docker logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
-  verify_secrets_registries:
-    name: 'Verify credentials (docker.io, quay.io)'
-    runs-on: 'ubuntu-latest'
-    if: ${{ github.secret_source == 'Actions' }}
-    steps:
       - name: 'login (docker.io)'
+        if: ${{ github.secret_source == 'Actions' }}
         env:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
           DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
@@ -47,11 +43,13 @@ jobs:
           echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
 
       - name: 'logout (docker.io)'
+        if: ${{ github.secret_source == 'Actions' }}
         run: |
           podman logout docker.io
           docker logout
 
       - name: 'login (quay.io)'
+        if: ${{ github.secret_source == 'Actions' }}
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
           QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
@@ -60,6 +58,7 @@ jobs:
           echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
 
       - name: 'logout (quay.io)'
+        if: ${{ github.secret_source == 'Actions' }}
         run: |
           podman logout quay.io
           docker logout quay.io
