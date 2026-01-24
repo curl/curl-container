@@ -36,6 +36,11 @@ jobs:
           echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
+      - name: 'logout (ghcr.io)'
+        run: |
+          podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+          docker logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+
   verify_secrets_registries:
     name: 'Verify credentials (docker.io, quay.io)'
     runs-on: 'ubuntu-latest'
