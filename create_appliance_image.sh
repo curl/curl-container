@@ -9,7 +9,6 @@
 # ex.
 #   > create_appliance_image.sh {arch} {dist} {base image} {resultant_image_name} {release_tag}
 #
-#
 
 echo "####### creating curl image."
 

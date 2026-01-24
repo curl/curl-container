@@ -7,9 +7,9 @@
 ###############################################################
 #
 # Create a dev image
+#
 # ex.
 #   > create_dev_image.sh {arch} {base image} {compiler} {deps} {build_opts} {branch or tag} {resultant_image_name} {run_tests}
-#
 #
 
 echo "####### creating curl dev image."
@@ -41,7 +41,7 @@ buildah config --label name="${image_name}" "$bdr"
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
   package_manage_update="apk upgrade --no-cache"
-  package_manage_add="apk add --no-cache "
+  package_manage_add="apk add --no-cache"
 fi
 if [[ "$dist" =~ .*"fedora".* ]]; then
   package_manage_update="dnf upgrade"
@@ -49,7 +49,7 @@ if [[ "$dist" =~ .*"fedora".* ]]; then
 fi
 if [[ "$dist" =~ .*"debian".* ]]; then
   package_manage_update="apt-get update"
-  package_manage_add="apt-get -y install "
+  package_manage_add="apt-get -y install"
 fi
 
 # install deps using specific dist package manager

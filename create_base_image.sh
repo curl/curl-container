@@ -6,15 +6,12 @@
 # SPDX-License-Identifier: curl-container
 ###############################################################
 #
-#
 #  base images for reuse
-#
-#
 #
 # ex.
 #   > create_base_image.sh {arch} {dist} {builder image} {deps} {resultant_image_name} {release_tag}
 #
-#
+
 echo "####### creating curl base image."
 
 # set default (will rarely change)
@@ -47,7 +44,7 @@ buildah config --label docker.cmd="podman run -it quay.io/curl/${image_name}:${r
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
   package_manage_update="apk upgrade --no-cache"
-  package_manage_add="apk add --no-cache "
+  package_manage_add="apk add --no-cache"
 fi
 if [[ "$dist" =~ .*"fedora".* ]]; then
   package_manage_update="dnf upgrade"
@@ -55,7 +52,7 @@ if [[ "$dist" =~ .*"fedora".* ]]; then
 fi
 if [[ "$dist" =~ .*"debian".* ]]; then
   package_manage_update="apt-get update"
-  package_manage_add="apt-get -y install "
+  package_manage_add="apt-get -y install"
 fi
 
 # deps
