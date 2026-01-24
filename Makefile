@@ -32,7 +32,7 @@ build_debian:
 #
 build_fedora:
 	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} \
-	  "git gcc libtool perl openssl-devel libssh2 libssh2-devel libnghttp2-devel brotli-devel libpsl-devel" \
+	  "git gcc libtool perl openssl-devel libssh2 libssh2-devel libnghttp2-devel brotli-devel libzstd-devel openldap-devel libidn2-devel libpsl-devel" \
 	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2=/usr" \
 	  ${branch_or_ref} curl-dev-fedora:${release_tag}
 
