@@ -29,7 +29,7 @@ image_name=${5}
 release_tag=${6}
 
 # set base and platform
-if [[ -n $platform ]]; then
+if [[ -n "${platform}" ]]; then
   echo "creating with platform=${platform}"
   ctr=$(buildah --platform "${platform}" from "${dist}")
 else
@@ -51,11 +51,11 @@ if [[ "$dist" =~ .*"alpine".* ]]; then
 fi
 if [[ "$dist" =~ .*"fedora".* ]]; then
   package_manage_update="dnf update upgrade"
-  package_manage_add="dnf add"
+  package_manage_add="dnf -y install"
 fi
 if [[ "$dist" =~ .*"debian".* ]]; then
-  package_manage_update="deb update upgrade"
-  package_manage_add="deb add"
+  package_manage_update="apt-get update"
+  package_manage_add="apt-get -y install "
 fi
 
 # deps

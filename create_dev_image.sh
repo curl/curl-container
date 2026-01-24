@@ -40,8 +40,8 @@ buildah config --label name="${image_name}" "$bdr"
 
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
-  package_manage_update="apk upgrade"
-  package_manage_add="apk add "
+  package_manage_update="apk upgrade --no-cache"
+  package_manage_add="apk add --no-cache "
 fi
 if [[ "$dist" =~ .*"fedora".* ]]; then
   package_manage_update="dnf update upgrade"
