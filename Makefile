@@ -8,9 +8,9 @@ fedora_base=docker.io/fedora
 base=docker.io/alpine:3.23.0
 arch=""
 compiler="gcc"
-build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr --with-gssapi"
 dev_deps="git zsh libssh2 libssh2-dev libssh2-static autoconf automake build-base groff openssl curl-dev python3 python3-dev libtool curl stunnel perl nghttp2 brotli brotli-dev krb5-dev libpsl-dev zstd"
 base_deps="brotli brotli-dev libssh2 nghttp2-dev libidn2 krb5 libpsl zstd"
+build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr --with-gssapi"
 
 ##############################################
 # debian dev image
