@@ -57,22 +57,6 @@ jobs:
           password: '${{ secrets.GITHUB_TOKEN }}'
           registry: 'ghcr.io/${{ github.repository_owner }}'
 
-      - name: 'login (docker.io)'
-        env:
-          DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
-          DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
-        run: |
-          echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
-          echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
-
-      - name: 'login (quay.io)'
-        env:
-          QUAY_USER: '${{ secrets.QUAY_USER }}'
-          QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
-        run: |
-          echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
-          echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
-
       - name: 'push images (ghcr.io)'
         run: |
           buildah push curl-dev:master  docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
