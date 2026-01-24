@@ -20,7 +20,7 @@ build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -
 #
 build_debian:
 	./create_dev_image.sh ${arch} ${debian_base} ${compiler} \
-	  "git curl gcc perl libssl-dev libssh2-1 libssh2-1-dev libnghttp2-dev libbrotli-dev libzstd-dev libldap-dev libidn2-dev libpsl-dev" \
+	  "git curl gcc libtool autoconf automake make perl libssl-dev libssh2-1 libssh2-1-dev libnghttp2-dev libbrotli-dev libzstd-dev libldap-dev libidn2-dev libpsl-dev" \
 	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2=/usr" \
 	  ${branch_or_ref} curl-dev-debian:${release_tag}
 
