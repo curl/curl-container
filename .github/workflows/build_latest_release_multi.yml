@@ -165,7 +165,7 @@ jobs:
         # Seen flaky with 'Error: no signatures found' (with cosign v3.0.2). Do it last to let other steps finish.
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          cosign verify --key cosign.pub docker.io/curlimages/curl:"$REL"
-          cosign verify --key cosign.pub docker.io/curlimages/curl:latest
-          cosign verify --key cosign.pub docker.io/curlimages/curl-base:"$REL"
-          cosign verify --key cosign.pub docker.io/curlimages/curl-base:latest
+          cosign -d verify --key cosign.pub docker.io/curlimages/curl:"$REL"
+          cosign -d verify --key cosign.pub docker.io/curlimages/curl:latest
+          cosign -d verify --key cosign.pub docker.io/curlimages/curl-base:"$REL"
+          cosign -d verify --key cosign.pub docker.io/curlimages/curl-base:latest
