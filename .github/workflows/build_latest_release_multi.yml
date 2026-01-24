@@ -117,6 +117,11 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl-base:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl-base:latest
 
+      - name: 'logout (docker.io)'
+        run: |
+          podman logout docker.io
+          docker logout
+
       - name: 'login (quay.io)'
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
@@ -142,6 +147,11 @@ jobs:
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl:latest
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:latest
+
+      - name: 'logout (quay.io)'
+        run: |
+          podman logout quay.io
+          docker logout quay.io
 
       - name: 'verify images with public key (quay.io)'
         run: |

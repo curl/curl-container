@@ -54,6 +54,11 @@ jobs:
           echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
           echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
 
+      - name: 'logout (docker.io)'
+        run: |
+          podman logout docker.io
+          docker logout
+
       - name: 'login (quay.io)'
         env:
           QUAY_USER: '${{ secrets.QUAY_USER }}'
@@ -61,6 +66,11 @@ jobs:
         run: |
           echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
           echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
+
+      - name: 'logout (quay.io)'
+        run: |
+          podman logout quay.io
+          docker logout quay.io
 
   build_multi_ci:
     name: 'build_multi_ci'
