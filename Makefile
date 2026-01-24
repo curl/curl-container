@@ -19,7 +19,10 @@ base_deps="brotli brotli-dev libssh2 nghttp2-dev libidn2 krb5 libpsl zstd"
 #  > make branch_or_ref=master release_tag=master build_debian
 #
 build_debian:
-	./create_dev_image.sh ${arch} ${debian_base} ${compiler} "git zsh libssh2-1 libssh2-1-dev autoconf automake build-essential groff libcurl4-openssl-dev python3 python3-dev libtool curl stunnel perl nghttp2 brotli libssl-dev libpsl-dev" "--enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr" ${branch_or_ref} curl-dev-debian:${release_tag}
+	./create_dev_image.sh ${arch} ${debian_base} ${compiler} \
+	  "git zsh libssh2-1 libssh2-1-dev autoconf automake build-essential groff libcurl4-openssl-dev python3 python3-dev libtool curl stunnel perl nghttp2 brotli libssl-dev libpsl-dev" \
+	  "--enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr" \
+	  ${branch_or_ref} curl-dev-debian:${release_tag}
 
 ##############################################
 # fedora dev image
@@ -28,7 +31,10 @@ build_debian:
 #  > make branch_or_ref=master release_tag=master build_fedora
 #
 build_fedora:
-	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} "gcc cargo zsh git libssh2 libssh2-devel openssl-devel python3 python3-devel python3-pip libtool curl stunnel perl nghttp2 brotli libpsl-devel" "--enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr" ${branch_or_ref} curl-dev-fedora:${release_tag}
+	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} \
+	  "gcc cargo zsh git libssh2 libssh2-devel openssl-devel python3 python3-devel python3-pip libtool curl stunnel perl nghttp2 brotli libpsl-devel" \
+	  "--enable-ipv6 --enable-unix-sockets -with-ssl --with-libssh2 --with-nghttp2=/usr" \
+	  ${branch_or_ref} curl-dev-fedora:${release_tag}
 
 ##############################################
 # build_alpine dev, base and appliance image
