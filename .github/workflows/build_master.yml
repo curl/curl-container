@@ -62,9 +62,9 @@ jobs:
 
       - name: 'push images (ghcr.io)'
         run: |
-          buildah push curl-dev:master  docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
-          buildah push curl-base:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base:master
-          buildah push curl:master      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl:master
+          buildah push localhost/curl-dev:master  docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev:master
+          buildah push localhost/curl-base:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base:master
+          buildah push localhost/curl:master      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl:master
 
       - name: 'sign images with sigstore key (ghcr.io)'
         env:

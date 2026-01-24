@@ -61,7 +61,7 @@ jobs:
           echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'push images: dev-debian (ghcr.io)'
-        run: buildah push curl-dev-debian:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
+        run: buildah push localhost/curl-dev-debian:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
 
       - name: 'sign images with sigstore key: dev-debian (ghcr.io)'
         env:
@@ -88,7 +88,7 @@ jobs:
           make image_name=localhost/curl-dev-fedora:master scan
 
       - name: 'push images: dev-fedora (ghcr.io)'
-        run: buildah push curl-dev-fedora:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
+        run: buildah push localhost/curl-dev-fedora:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
 
       - name: 'sign images with sigstore key: dev-fedora (ghcr.io)'
         env:
