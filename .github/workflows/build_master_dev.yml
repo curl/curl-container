@@ -22,14 +22,6 @@ jobs:
     permissions:
       packages: write  # To create/update container on ghcr.io
     steps:
-      - name: 'login (ghcr.io)'
-        env:
-          REGISTRY_USER: '${{ github.actor }}'
-          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-        run: |
-          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
-          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
-
       - name: 'install dev deps'
         run: |
           sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
@@ -57,6 +49,14 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-dev-debian:master scan
+
+      - name: 'login (ghcr.io)'
+        env:
+          REGISTRY_USER: '${{ github.actor }}'
+          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: |
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
       - name: 'push images (dev-debian) (ghcr.io)'
         run: buildah push curl-dev-debian:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
@@ -93,12 +93,12 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
 
-      - name: 'verify images with public key (dev-fedora) (ghcr.io)'
-        run: |
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
-
       - name: 'logout (ghcr.io)'
         run: |
           podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
           docker logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+
+      - name: 'verify images with public key (dev-fedora) (ghcr.io)'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
