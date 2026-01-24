@@ -21,29 +21,6 @@ jobs:
     permissions:
       packages: write  # To create/update container on ghcr.io
     steps:
-      - name: 'login (ghcr.io)'
-        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
-        with:
-          username: '${{ github.actor }}'
-          password: '${{ secrets.GITHUB_TOKEN }}'
-          registry: 'ghcr.io/${{ github.repository_owner }}'
-
-      - name: 'login (docker.io)'
-        env:
-          DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
-          DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
-        run: |
-          echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
-          echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
-
-      - name: 'login (quay.io)'
-        env:
-          QUAY_USER: '${{ secrets.QUAY_USER }}'
-          QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
-        run: |
-          echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
-          echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
-
       - name: 'install dev deps'
         run: |
           sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
@@ -72,6 +49,29 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl:master scan
+
+      - name: 'login (ghcr.io)'
+        uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
+        with:
+          username: '${{ github.actor }}'
+          password: '${{ secrets.GITHUB_TOKEN }}'
+          registry: 'ghcr.io/${{ github.repository_owner }}'
+
+      - name: 'login (docker.io)'
+        env:
+          DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
+          DOCKER_HUB_TOKEN: '${{ secrets.DOCKER_HUB_TOKEN }}'
+        run: |
+          echo "${DOCKER_HUB_TOKEN}" | podman login -u "${DOCKER_HUB_USER}" --password-stdin docker.io
+          echo "${DOCKER_HUB_TOKEN}" | docker login -u "${DOCKER_HUB_USER}" --password-stdin
+
+      - name: 'login (quay.io)'
+        env:
+          QUAY_USER: '${{ secrets.QUAY_USER }}'
+          QUAY_TOKEN: '${{ secrets.QUAY_TOKEN }}'
+        run: |
+          echo "${QUAY_TOKEN}" | podman login -u "${QUAY_USER}" --password-stdin quay.io
+          echo "${QUAY_TOKEN}" | docker login -u "${QUAY_USER}" --password-stdin quay.io
 
       - name: 'push images (ghcr.io)'
         run: |
