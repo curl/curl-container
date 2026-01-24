@@ -41,16 +41,23 @@ jobs:
           persist-credentials: false
           ref: 'main'
 
+      - name: 'set env vars'
+        run: |
+          latest_release_ref=master
+          echo "TAG_REF=$latest_release_ref" >> "$GITHUB_ENV"
+          release_image_tag=master
+          echo "REL=$release_image_tag" >> "$GITHUB_ENV"
+
       - name: 'build image: multi'
-        run: buildah unshare make branch_or_ref=master release_tag=master multibuild
+        run: buildah unshare make branch_or_ref="$TAG_REF" release_tag="$REL" multibuild
 
       - name: 'test image'
-        run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
+        run: buildah unshare make dist_name=localhost/curl-multi release_tag="$REL" test
 
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          make image_name=localhost/curl-multi:master scan
+          make image_name=localhost/curl-multi:"$REL" scan
 
       - name: 'login (ghcr.io)'
         env:
@@ -62,8 +69,8 @@ jobs:
 
       - name: 'push images (ghcr.io)'
         run: |
-          buildah manifest push --format v2s2 --all localhost/curl-multi:master      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:master
-          buildah manifest push --format v2s2 --all localhost/curl-base-multi:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:master
+          buildah manifest push --format v2s2 --all localhost/curl-multi:"$REL"      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
+          buildah manifest push --format v2s2 --all localhost/curl-base-multi:"$REL" docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
 
       - name: 'sign images with sigstore key (ghcr.io)'
         env:
@@ -71,8 +78,8 @@ jobs:
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:master
-          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:master
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
+          echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
 
       - name: 'logout (ghcr.io)'
         run: |
@@ -82,5 +89,5 @@ jobs:
       - name: 'verify images with public key (ghcr.io)'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:master
-          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:master
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
+          cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
