@@ -51,7 +51,6 @@ if [[ "$dist" =~ .*"debian".* ]]; then
   package_manage_add="apt-get -y install "
 fi
 
-
 # install deps using specific dist package manager
 buildah run "$ctr" ${package_manage_update}
 buildah run "$ctr" ${package_manage_add} ${deps}

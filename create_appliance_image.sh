@@ -27,7 +27,6 @@ else
   ctr=$(buildah from ${dist})
 fi
 
-
 # label/env
 buildah config --label maintainer="James Fuller <jim.fuller@webcomposite.com>" $ctr
 buildah config --label name="${image_name}" $ctr
