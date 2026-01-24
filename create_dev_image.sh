@@ -44,7 +44,7 @@ if [[ "$dist" =~ .*"alpine".* ]]; then
   package_manage_add="apk add --no-cache "
 fi
 if [[ "$dist" =~ .*"fedora".* ]]; then
-  package_manage_update="dnf update upgrade"
+  package_manage_update="dnf upgrade"
   package_manage_add="dnf -y install"
 fi
 if [[ "$dist" =~ .*"debian".* ]]; then
