@@ -54,7 +54,7 @@ fi
 
 # install deps using specific dist package manager
 buildah run "$ctr" ${package_manage_update}
-buildah run "$ctr" ${package_manage_add} "${deps}"
+buildah run "$ctr" ${package_manage_add} ${deps}
 
 # setup curl source derived from branch or tag
 echo "get curl source"
