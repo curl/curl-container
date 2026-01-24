@@ -112,7 +112,6 @@ scan:
 # multibuild
 #############################
 #
-#
 #  > make branch_or_ref=master release_tag=master multibuild
 #
 multibuild:
@@ -121,7 +120,6 @@ multibuild:
 #############################
 # utilities
 #############################
-#
 #
 clean:
 	buildah rm $(container_ids)
