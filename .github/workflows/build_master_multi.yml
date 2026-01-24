@@ -62,7 +62,7 @@ jobs:
           persist-credentials: false
           ref: 'main'
 
-      - name: 'build multi image'
+      - name: 'build image (multi)'
         run: buildah unshare make branch_or_ref=master release_tag=master multibuild
 
       - name: 'test image'

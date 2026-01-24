@@ -68,7 +68,7 @@ jobs:
           release_image_tag="${rel//_/.}"
           echo "REL=$release_image_tag" >> "$GITHUB_ENV"
 
-      - name: 'build multi image'
+      - name: 'build image (multi)'
         run: buildah unshare make branch_or_ref="$TAG_REF" release_tag="$REL" multibuild
 
       - name: 'test image'
