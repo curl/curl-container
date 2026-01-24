@@ -20,7 +20,7 @@ build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -
 #
 build_debian:
 	./create_dev_image.sh ${arch} ${debian_base} ${compiler} \
-	  "zsh curl gcc libtool autoconf automake make perl libssl-dev libssh2-1 libssh2-1-dev libnghttp2-dev libbrotli-dev libzstd-dev libidn2-dev ibkrb5-dev libpsl-dev" \
+	  "git zsh curl gcc libtool autoconf automake make perl libssl-dev libssh2-1 libssh2-1-dev libnghttp2-dev libbrotli-dev libzstd-dev libidn2-dev ibkrb5-dev libpsl-dev" \
 	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2 --with-gssapi" \
 	  ${branch_or_ref} curl-dev-debian:${release_tag}
 
@@ -32,7 +32,7 @@ build_debian:
 #
 build_fedora:
 	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} \
-	  "zsh curl gcc libtool perl openssl-devel libssh2-devel libnghttp2-devel brotli-devel libzstd-devel libidn2-devel krb5-devel libpsl-devel" \
+	  "git zsh curl gcc libtool perl openssl-devel libssh2-devel libnghttp2-devel brotli-devel libzstd-devel libidn2-devel krb5-devel libpsl-devel" \
 	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2 --with-gssapi" \
 	  ${branch_or_ref} curl-dev-fedora:${release_tag}
 
