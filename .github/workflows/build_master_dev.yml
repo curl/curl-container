@@ -44,6 +44,9 @@ jobs:
       - name: 'build image: dev-debian'
         run: buildah unshare make branch_or_ref=master release_tag=master build_debian
 
+      - name: 'test image: dev-debian'
+        run: buildah unshare make dist_name=localhost/curl-dev-debian release_tag=master test
+
       - name: 'security scan image: dev-debian'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -75,6 +78,9 @@ jobs:
 
       - name: 'build image: dev-fedora'
         run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
+
+      - name: 'test image: dev-fedora'
+        run: buildah unshare make dist_name=localhost/curl-dev-fedora release_tag=master test
 
       - name: 'security scan image: dev-fedora'
         run: |
