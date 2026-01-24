@@ -25,11 +25,13 @@ jobs:
           sudo apt-get -o Dpkg::Use-Pty=0 install \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
 
-      - name: 'install scan prereqs'
-        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+      - name: 'install prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
 
-      - name: 'install cosign'
-        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+      - name: 'versions'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          podman --version; docker --version; cosign version
 
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
@@ -73,11 +75,13 @@ jobs:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
 
       - name: 'verify images with public key (ghcr.io)'
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
           cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
 
@@ -101,6 +105,7 @@ jobs:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl:latest
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin docker.io/curlimages/curl-base:"$REL"
@@ -126,6 +131,7 @@ jobs:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl:"$REL"
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl:latest
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin quay.io/curl/curl-base:"$REL"
@@ -133,6 +139,7 @@ jobs:
 
       - name: 'verify images with public key (quay.io)'
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cosign verify --key cosign.pub quay.io/curl/curl:"$REL"
           cosign verify --key cosign.pub quay.io/curl/curl:latest
           cosign verify --key cosign.pub quay.io/curl/curl-base:"$REL"
@@ -141,6 +148,7 @@ jobs:
       - name: 'verify images with public key (docker.io)'
         # Seen flaky with 'Error: no signatures found' (with cosign v3.0.2). Do it last to let other steps finish.
         run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           cosign verify --key cosign.pub docker.io/curlimages/curl:"$REL"
           cosign verify --key cosign.pub docker.io/curlimages/curl:latest
           cosign verify --key cosign.pub docker.io/curlimages/curl-base:"$REL"

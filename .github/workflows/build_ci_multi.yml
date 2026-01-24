@@ -77,8 +77,13 @@ jobs:
           sudo apt-get -o Dpkg::Use-Pty=0 install \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
 
-      - name: 'install scan prereqs'
-        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+      - name: 'install prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
+
+      - name: 'versions'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          podman --version; docker --version; cosign version
 
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
