@@ -20,16 +20,16 @@ branch_or_ref=${6}
 release_tag=${7}
 
 echo "####### creating curl multi image."
-buildah manifest create curl-base-multi:${release_tag}
-buildah manifest create curl-multi:${release_tag}
+buildah manifest create "curl-base-multi:${release_tag}"
+buildah manifest create "curl-multi:${release_tag}"
 
 # loop through supported arches
 for IMGTAG in "linux/386" "linux/arm/v7" "linux/amd64" "linux/arm64" "linux/ppc64le" ; do
   pathname="${IMGTAG////-}"
   echo "building $IMGTAG : $pathname"
-  ./create_dev_image.sh "$IMGTAG" ${base} ${compiler} "$dev_deps" "$build_opts" ${branch_or_ref} curl-dev-${pathname}:${release_tag} 0
-  ./create_base_image.sh "$IMGTAG" ${base} localhost/curl-dev-${pathname}:${release_tag} "$base_deps" curl-base-${pathname}:${release_tag} ${release_tag}
-  buildah manifest add curl-base-multi:${release_tag} localhost/curl-base-${pathname}:${release_tag};
-  ./create_appliance_image.sh "$IMGTAG" localhost/curl-base-${pathname}:${release_tag} curl-${pathname}:${release_tag} ${release_tag}
-  buildah manifest add curl-multi:${release_tag} localhost/curl-${pathname}:${release_tag};
+  ./create_dev_image.sh "$IMGTAG" "${base}" "${compiler}" "$dev_deps" "$build_opts" "${branch_or_ref}" "curl-dev-${pathname}:${release_tag}" 0
+  ./create_base_image.sh "$IMGTAG" "${base}" "localhost/curl-dev-${pathname}:${release_tag}" "$base_deps" "curl-base-${pathname}:${release_tag}" "${release_tag}"
+  buildah manifest add "curl-base-multi:${release_tag}" "localhost/curl-base-${pathname}:${release_tag}"
+  ./create_appliance_image.sh "$IMGTAG" "localhost/curl-base-${pathname}:${release_tag}" "curl-${pathname}:${release_tag}" "${release_tag}"
+  buildah manifest add "curl-multi:${release_tag}" "localhost/curl-${pathname}:${release_tag}"
 done
