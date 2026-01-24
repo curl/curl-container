@@ -20,8 +20,8 @@ dist=${1}
 branch_or_tag=${2}
 
 # create and mount image
-ctr=$(buildah from ${dist}:${branch_or_tag})
-ctrmnt=$(buildah mount $ctr)
+ctr=$(buildah from "${dist}:${branch_or_tag}")
+ctrmnt=$(buildah mount "$ctr")
 
 # check file exists
 if [[ ! -f "$ctrmnt/usr/bin/curl" ]]; then
@@ -40,4 +40,4 @@ if [ ! -L "$ctrmnt/usr/lib/libcurl.so" ] && [ ! -e "$ctrmnt/usr/lib/libcurl.so" 
 fi
 
 # test running curl
-buildah run $ctr /usr/bin/curl -V
+buildah run "$ctr" /usr/bin/curl -V
