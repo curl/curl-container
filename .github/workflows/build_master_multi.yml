@@ -62,8 +62,8 @@ jobs:
 
       - name: 'push images (ghcr.io)'
         run: |
-          buildah manifest push --all --format v2s2 localhost/curl-multi:master      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:master
-          buildah manifest push --all --format v2s2 localhost/curl-base-multi:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:master
+          buildah manifest push --format v2s2 --all localhost/curl-multi:master      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:master
+          buildah manifest push --format v2s2 --all localhost/curl-base-multi:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:master
 
       - name: 'sign images with sigstore key (ghcr.io)'
         env:
