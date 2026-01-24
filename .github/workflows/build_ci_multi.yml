@@ -14,7 +14,7 @@ permissions: {}
 
 jobs:
   verify_secrets_ghcr:
-    name: 'Verify credentials'
+    name: 'Verify credentials (ghcr.io)'
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'versions'
@@ -33,11 +33,14 @@ jobs:
           podman logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
           docker logout ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
 
-  verify_secrets_registries:
-    name: 'Verify credentials (docker.io, quay.io)'
+  verify_secrets_docker:
+    name: 'Verify credentials (docker.io)'
     runs-on: 'ubuntu-latest'
     if: ${{ github.secret_source == 'Actions' }}
     steps:
+      - name: 'versions'
+        run: podman --version; docker --version
+
       - name: 'login (docker.io)'
         env:
           DOCKER_HUB_USER: '${{ secrets.DOCKER_HUB_USER }}'
@@ -50,6 +53,14 @@ jobs:
         run: |
           podman logout docker.io
           docker logout
+
+  verify_secrets_quay:
+    name: 'Verify credentials (quay.io)'
+    runs-on: 'ubuntu-latest'
+    if: ${{ github.secret_source == 'Actions' }}
+    steps:
+      - name: 'versions'
+        run: podman --version; docker --version
 
       - name: 'login (quay.io)'
         env:
