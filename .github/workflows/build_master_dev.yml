@@ -42,54 +42,54 @@ jobs:
           persist-credentials: false
           ref: 'main'
 
-      - name: 'build debian dev image'
+      - name: 'build image (dev-debian)'
         run: buildah unshare make branch_or_ref=master release_tag=master build_debian
 
       - name: 'install scan prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
 
-      - name: 'security scan image'
+      - name: 'security scan image (dev-debian)'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-dev-debian:master scan
 
-      - name: 'push images (ghcr.io)'
+      - name: 'push images (dev-debian) (ghcr.io)'
         run: |
           buildah push curl-dev-debian:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
 
       - name: 'install cosign'
         uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
 
-      - name: 'sign images with sigstore key (ghcr.io)'
+      - name: 'sign images with sigstore key (dev-debian) (ghcr.io)'
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
 
-      - name: 'verify images with public key (ghcr.io)'
+      - name: 'verify images with public key (dev-debian) (ghcr.io)'
         run: |
           cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
 
-      - name: 'build fedora dev image'
+      - name: 'build dev image (dev-fedora)'
         run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
 
-      - name: 'security scan image'
+      - name: 'security scan image (dev-fedora)'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-dev-fedora:master scan
 
-      - name: 'push images (ghcr.io)'
+      - name: 'push images (dev-fedora) (ghcr.io)'
         run: buildah push curl-dev-fedora:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
 
-      - name: 'sign images with sigstore key (ghcr.io)'
+      - name: 'sign images with sigstore key (dev-fedora) (ghcr.io)'
         env:
           COSIGN_PASSWORD: '${{ secrets.COSIGN_PASSWORD }}'
           COSIGN_PRIVATE_KEY: '${{ secrets.COSIGN_PRIVATE_KEY }}'
         run: |
           echo "${COSIGN_PRIVATE_KEY}" | cosign sign -y --key /dev/stdin ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
 
-      - name: 'verify images with public key (ghcr.io)'
+      - name: 'verify images with public key (dev-fedora) (ghcr.io)'
         run: |
           cosign verify --key cosign.pub ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-fedora:master
 
