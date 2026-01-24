@@ -10,7 +10,7 @@ arch=""
 compiler="gcc"
 dev_deps="git zsh libssh2 libssh2-dev libssh2-static autoconf automake build-base openssl curl-dev python3 python3-dev libtool curl perl nghttp2 brotli brotli-dev krb5-dev libpsl-dev zstd"
 base_deps="brotli brotli-dev libssh2 nghttp2-dev libidn2 krb5 libpsl zstd"
-build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2=/usr --with-gssapi"
+build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2 --with-gssapi"
 
 ##############################################
 # debian dev image
@@ -21,7 +21,7 @@ build_opts="--enable-static --disable-ldap --enable-ipv6 --enable-unix-sockets -
 build_debian:
 	./create_dev_image.sh ${arch} ${debian_base} ${compiler} \
 	  "zsh curl gcc libtool autoconf automake make perl libssl-dev libssh2-1 libssh2-1-dev libnghttp2-dev libbrotli-dev libzstd-dev libidn2-dev libpsl-dev" \
-	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2=/usr" \
+	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2" \
 	  ${branch_or_ref} curl-dev-debian:${release_tag}
 
 ##############################################
@@ -33,7 +33,7 @@ build_debian:
 build_fedora:
 	./create_dev_image.sh ${arch} ${fedora_base} ${compiler} \
 	  "zsh curl gcc libtool perl openssl-devel libssh2-devel libnghttp2-devel brotli-devel libzstd-devel libidn2-devel libpsl-devel" \
-	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2=/usr" \
+	  "--enable-ipv6 --enable-unix-sockets --with-openssl --with-libssh2 --with-nghttp2" \
 	  ${branch_or_ref} curl-dev-fedora:${release_tag}
 
 ##############################################
