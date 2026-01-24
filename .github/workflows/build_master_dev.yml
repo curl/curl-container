@@ -37,6 +37,12 @@ jobs:
           sudo apt-get -o Dpkg::Use-Pty=0 install \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
 
+      - name: 'install scan prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+
+      - name: 'install cosign'
+        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
@@ -44,9 +50,6 @@ jobs:
 
       - name: 'build image (dev-debian)'
         run: buildah unshare make branch_or_ref=master release_tag=master build_debian
-
-      - name: 'install scan prereqs'
-        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
 
       - name: 'security scan image (dev-debian)'
         run: |
@@ -56,9 +59,6 @@ jobs:
       - name: 'push images (dev-debian) (ghcr.io)'
         run: |
           buildah push curl-dev-debian:master docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-dev-debian:master
-
-      - name: 'install cosign'
-        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
 
       - name: 'sign images with sigstore key (dev-debian) (ghcr.io)'
         env:

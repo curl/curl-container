@@ -77,6 +77,9 @@ jobs:
           sudo apt-get -o Dpkg::Use-Pty=0 install \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
 
+      - name: 'install scan prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
@@ -86,9 +89,6 @@ jobs:
 
       - name: 'test image'
         run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
-
-      - name: 'install scan prereqs'
-        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
 
       - name: 'security scan image'
         run: |

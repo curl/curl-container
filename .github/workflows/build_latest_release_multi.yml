@@ -48,6 +48,12 @@ jobs:
           sudo apt-get -o Dpkg::Use-Pty=0 install \
             qemu-user-static buildah less git make podman clamav clamav-freshclam
 
+      - name: 'install scan prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
+
+      - name: 'install cosign'
+        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
+
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           persist-credentials: false
@@ -68,9 +74,6 @@ jobs:
       - name: 'test image'
         run: buildah unshare make dist_name=localhost/curl-multi release_tag="$REL" test
 
-      - name: 'install scan prereqs'
-        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
-
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
@@ -80,9 +83,6 @@ jobs:
         run: |
           buildah manifest push --format v2s2 --all curl-multi:"$REL"      docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-multi:"$REL"
           buildah manifest push --format v2s2 --all curl-base-multi:"$REL" docker://ghcr.io/"${GITHUB_REPOSITORY}"/curl-base-multi:"$REL"
-
-      - name: 'install cosign'
-        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
 
       - name: 'sign images with sigstore key (ghcr.io)'
         env:
