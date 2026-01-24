@@ -90,7 +90,7 @@ if [[ $run_tests -eq 1 ]]; then
 fi
 
 # install curl in /build
-buildah run "$bdr" make DESTDIR="/build/" install "-j$(nproc)"
+buildah run "$bdr" make DESTDIR="/build" install "-j$(nproc)"
 
 # label image
 buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" "$bdr"
