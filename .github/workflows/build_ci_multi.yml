@@ -54,6 +54,27 @@ jobs:
       - name: 'post'
         run: ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
 
+  verify_secrets_ghcr_command_dual:
+    name: 'Verify credentials T COMMAND DUAL'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'versions'
+        run: podman --version; docker --version
+
+      - name: 'pre'
+        run: ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+
+      - name: 'login (ghcr.io) as actor, via command-line'
+        env:
+          REGISTRY_USER: '${{ github.actor }}'
+          REGISTRY_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: |
+          echo "${REGISTRY_TOKEN}" | podman login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+          echo "${REGISTRY_TOKEN}" | docker login -u "${REGISTRY_USER}" --password-stdin ghcr.io/"${GITHUB_REPOSITORY_OWNER}"
+
+      - name: 'post'
+        run: ls -l "$HOME"/.docker/config.json || true; ls -l "${XDG_RUNTIME_DIR}"/containers/auth.json || true
+
   verify_secrets_ghcr:
     name: 'Verify credentials'
     runs-on: 'ubuntu-latest'
