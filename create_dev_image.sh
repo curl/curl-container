@@ -78,7 +78,7 @@ else
   buildah config --workingdir /src/curl-"${branch_or_tag}" "$bdr"
 fi
 
-parallel=5
+parallel=$(nproc)
 echo "parallel: ${parallel}"
 
 # build curl
