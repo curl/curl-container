@@ -78,24 +78,27 @@ else
   buildah config --workingdir /src/curl-"${branch_or_tag}" "$bdr"
 fi
 
-parallel=1
+if [[ -n "${platform}" && (! "${platform}" =~ /(386|amd64)) ]]; then
+  parallel=1
+else
+  parallel=$(nproc)
+fi
+
+echo "parallel: ${parallel}"
 
 # build curl
 buildah run "$bdr" autoreconf -fi
 # shellcheck disable=SC2086
 time buildah run "$bdr" ./configure --disable-dependency-tracking ${build_opts}
-echo "||-j${parallel}||"
-time buildah run "$bdr" echo '-j$(nproc)'
-time buildah run "$bdr" echo "-j$(nproc)"
-time buildah run "$bdr" make '-j$(nproc)'
+time buildah run "$bdr" make "-j${parallel}"
 
 # run tests
 if [[ $run_tests -eq 1 ]]; then
-  buildah run "$bdr" make '-j$(nproc)' test
+  buildah run "$bdr" make "-j${parallel}" test
 fi
 
 # install curl in /build
-buildah run "$bdr" make '-j$(nproc)' install DESTDIR="/build"
+buildah run "$bdr" make "-j${parallel}" install DESTDIR="/build"
 
 # label image
 buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" "$bdr"
