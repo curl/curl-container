@@ -98,13 +98,20 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: 'build multi image'
-        run: buildah unshare make branch_or_ref=master release_tag=master multibuild
+      - name: 'set env vars'
+        run: |
+          latest_release_ref=master
+          echo "TAG_REF=$latest_release_ref" >> "$GITHUB_ENV"
+          release_image_tag=master
+          echo "REL=$release_image_tag" >> "$GITHUB_ENV"
+
+      - name: 'build image: multi'
+        run: buildah unshare make branch_or_ref="$TAG_REF" release_tag="$REL" multibuild
 
       - name: 'test image'
-        run: buildah unshare make dist_name=localhost/curl-multi release_tag=master test
+        run: buildah unshare make dist_name=localhost/curl-multi release_tag="$REL" test
 
       - name: 'security scan image'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          make image_name=localhost/curl-multi:master scan
+          make image_name=localhost/curl-multi:"$REL" scan
