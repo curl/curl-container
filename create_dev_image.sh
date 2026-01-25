@@ -78,12 +78,7 @@ else
   buildah config --workingdir /src/curl-"${branch_or_tag}" "$bdr"
 fi
 
-if [[ -n "${platform}" && (! "${platform}" =~ /(386|amd64)) ]]; then
-  parallel=1
-else
-  parallel=$(nproc)
-fi
-
+parallel=5
 echo "parallel: ${parallel}"
 
 # build curl
