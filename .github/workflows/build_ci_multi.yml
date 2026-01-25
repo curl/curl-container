@@ -75,8 +75,8 @@ jobs:
           podman logout quay.io
           docker logout quay.io
 
-  build_ci_master:
-    name: 'build_ci_master'
+  master:
+    name: 'Test build: master'
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'install dev deps'
@@ -132,8 +132,8 @@ jobs:
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-dev-fedora:master scan
 
-  build_multi_ci:
-    name: 'build_multi_ci'
+  multi:
+    name: 'Test build: multi'
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'install dev deps'
