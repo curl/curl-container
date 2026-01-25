@@ -81,8 +81,8 @@ fi
 # build curl
 buildah run "$bdr" autoreconf -fi
 # shellcheck disable=SC2086
-buildah run "$bdr" ./configure --disable-dependency-tracking ${build_opts}
-buildah run "$bdr" make "-j$(nproc)"
+time buildah run "$bdr" ./configure --disable-dependency-tracking ${build_opts}
+time buildah run "$bdr" make "-j$(nproc)"
 
 # run tests
 if [[ $run_tests -eq 1 ]]; then
