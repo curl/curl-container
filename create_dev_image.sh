@@ -65,14 +65,14 @@ if [ "${branch_or_tag:0:4}" = "curl" ]; then
   # its a tag, retrieve release source
   # shellcheck disable=SC2154
   buildah run "$bdr" /usr/bin/curl -L -o curl.tar.gz "https://github.com/curl/curl/releases/download/${branch_or_tag}/curl-${release_tag}.tar.gz"
-  buildah run "$bdr" tar -xvf curl.tar.gz
+  buildah run "$bdr" tar -xf curl.tar.gz
   buildah run "$bdr" rm curl.tar.gz
   buildah run "$bdr" mv curl-"${release_tag}" /src/curl-"${release_tag}"
   buildah config --workingdir /src/curl-"${release_tag}" "$bdr"
 else
   # its a branch, retrieve archive source
   buildah run "$bdr" /usr/bin/curl -L -o curl.tar.gz "https://github.com/curl/curl/archive/refs/heads/${branch_or_tag}.tar.gz"
-  buildah run "$bdr" tar -xvf curl.tar.gz
+  buildah run "$bdr" tar -xf curl.tar.gz
   buildah run "$bdr" rm curl.tar.gz
   buildah run "$bdr" mv curl-"${branch_or_tag}" /src/curl-"${branch_or_tag}"
   buildah config --workingdir /src/curl-"${branch_or_tag}" "$bdr"
