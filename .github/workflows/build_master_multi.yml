@@ -50,10 +50,10 @@ jobs:
       - name: 'build image: multi'
         run: buildah unshare make branch_or_ref="$TAG_REF" release_tag="$REL" multibuild
 
-      - name: 'test image'
+      - name: 'test image: multi'
         run: buildah unshare make dist_name=localhost/curl-multi release_tag="$REL" test
 
-      - name: 'security scan image'
+      - name: 'security scan image: multi'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl-multi:"$REL" scan

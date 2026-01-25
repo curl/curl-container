@@ -43,10 +43,10 @@ jobs:
       - name: 'build image: master'
         run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
 
-      - name: 'test image'
+      - name: 'test image: master'
         run: buildah unshare make dist_name=localhost/curl release_tag=master test
 
-      - name: 'security scan image'
+      - name: 'security scan image: master'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           make image_name=localhost/curl:master scan

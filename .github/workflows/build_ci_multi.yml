@@ -1,4 +1,4 @@
-name: build_ci_multi_images
+name: build_ci_images
 
 'on':
   pull_request:
@@ -75,8 +75,8 @@ jobs:
           podman logout quay.io
           docker logout quay.io
 
-  build_multi_ci:
-    name: 'build_multi_ci'
+  master:
+    name: 'Test build: master'
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'install dev deps'
@@ -94,6 +94,57 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           podman --version; docker --version; cosign version
+
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          persist-credentials: false
+
+      - name: 'build image: master'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_ref_images
+
+      - name: 'test image: master'
+        run: buildah unshare make dist_name=localhost/curl release_tag=master test
+
+      - name: 'security scan image: master'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          make image_name=localhost/curl:master scan
+
+      - name: 'build image: dev-debian'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_debian
+
+      - name: 'test image: dev-debian'
+        run: buildah unshare make dist_name=localhost/curl-dev-debian release_tag=master test
+
+      - name: 'security scan image: dev-debian'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          make image_name=localhost/curl-dev-debian:master scan
+
+      - name: 'build image: dev-fedora'
+        run: buildah unshare make branch_or_ref=master release_tag=master build_fedora
+
+      - name: 'test image: dev-fedora'
+        run: buildah unshare make dist_name=localhost/curl-dev-fedora release_tag=master test
+
+      - name: 'security scan image: dev-fedora'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          make image_name=localhost/curl-dev-fedora:master scan
+
+  multi:
+    name: 'Test build: multi'
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: 'install dev deps'
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/{azure-cli.sources,microsoft-prod.list,ondrej-ubuntu-php-noble.sources}
+          sudo apt-get -o Dpkg::Use-Pty=0 update
+          sudo apt-get -o Dpkg::Use-Pty=0 install \
+            qemu-user-static buildah less git make podman clamav clamav-freshclam
+
+      - name: 'install prereqs'
+        run: /home/linuxbrew/.linuxbrew/bin/brew install grype trivy
 
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:

@@ -26,7 +26,7 @@ buildah manifest create "curl-base-multi:${release_tag}"
 buildah manifest create "curl-multi:${release_tag}"
 
 # loop through supported arches
-for IMGTAG in "linux/386" "linux/arm/v7" "linux/amd64" "linux/arm64" "linux/ppc64le"; do
+for IMGTAG in "linux/386" "linux/amd64" "linux/arm64" "linux/arm/v7" "linux/ppc64le"; do
   pathname="${IMGTAG////-}"
   echo "building $IMGTAG : $pathname"
   ./create_dev_image.sh "$IMGTAG" "${base}" "${compiler}" "$dev_deps" "$build_opts" "${branch_or_ref}" "curl-dev-${pathname}:${release_tag}" 0
