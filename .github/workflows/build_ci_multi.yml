@@ -89,6 +89,7 @@ jobs:
       - name: 'install prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
 
+      # cosign installed as a test, but not used in this job.
       - name: 'versions'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
