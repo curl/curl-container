@@ -1,4 +1,4 @@
-name: build_ci_multi_images
+name: build_ci_images
 
 'on':
   pull_request:
@@ -75,8 +75,8 @@ jobs:
           podman logout quay.io
           docker logout quay.io
 
-  build_ci:
-    name: 'build_ci'
+  build_ci_master:
+    name: 'build_ci_master'
     runs-on: 'ubuntu-latest'
     steps:
       - name: 'install dev deps'
