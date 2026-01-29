@@ -15,7 +15,7 @@ permissions: {}
 jobs:
   verify_secrets_ghcr:
     name: 'Verify credentials (ghcr.io)'
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-slim'
     steps:
       - name: 'versions'
         run: podman --version; docker --version
@@ -35,7 +35,7 @@ jobs:
 
   verify_secrets_docker:
     name: 'Verify credentials (docker.io)'
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-slim'
     if: ${{ github.secret_source == 'Actions' }}
     steps:
       - name: 'versions'
@@ -56,7 +56,7 @@ jobs:
 
   verify_secrets_quay:
     name: 'Verify credentials (quay.io)'
-    runs-on: 'ubuntu-latest'
+    runs-on: 'ubuntu-slim'
     if: ${{ github.secret_source == 'Actions' }}
     steps:
       - name: 'versions'
