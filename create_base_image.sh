@@ -85,9 +85,12 @@ buildah run "$ctr" ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl.so
 buildah run "$ctr" curl https://curl.se/ca/cacert.pem -L -o /cacert.pem
 buildah config --env CURL_CA_BUNDLE="/cacert.pem" "$ctr"
 
-# setup curl_group and curl_user though it is not used directly in this image
-buildah run "$ctr" addgroup -S curl_group
-buildah run "$ctr" adduser -S curl_user -G curl_group
+# setup curl_group and curl_user with explicit numeric GID/UID (8888)
+# using numeric id ensures consistent identity across images and runtimes,
+# and satisfies Kubernetes runAsNonRoot enforcement without requiring
+# a username lookup (which can fail in distroless/scratch environments)
+buildah run "$ctr" addgroup -S -g 8888 curl_group
+buildah run "$ctr" adduser -S -u 8888 curl_user -G curl_group
 
 # set entrypoint
 buildah config --cmd curl "$ctr"

@@ -32,8 +32,8 @@ buildah config --label name="${image_name}" "$ctr"
 buildah config --label version="${release_tag}" "$ctr"
 buildah config --label docker.cmd="podman run -it quay.io/curl/${image_name}:${release_tag}" "$ctr"
 
-# assumes base image has setup curl_user
-buildah config --user curl_user "$ctr"
+# assumes base image has setup curl_user with numeric id 8888
+buildah config --user 8888 "$ctr"
 
 # label image
 buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" "$ctr"
