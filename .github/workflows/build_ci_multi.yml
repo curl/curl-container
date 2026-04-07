@@ -36,6 +36,7 @@ jobs:
   verify_secrets_docker:
     name: 'Verify credentials (docker.io)'
     runs-on: 'ubuntu-latest'
+    environment: registry
     if: ${{ github.secret_source == 'Actions' }}
     steps:
       - name: 'versions'
@@ -57,6 +58,7 @@ jobs:
   verify_secrets_quay:
     name: 'Verify credentials (quay.io)'
     runs-on: 'ubuntu-latest'
+    environment: registry
     if: ${{ github.secret_source == 'Actions' }}
     steps:
       - name: 'versions'
