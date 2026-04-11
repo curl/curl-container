@@ -81,8 +81,13 @@ buildah run "$ctr" rm /usr/lib/libcurl.so.4 /usr/lib/libcurl.so
 buildah run "$ctr" ln -s /usr/lib/"${SO_NAME}" /usr/lib/libcurl.so.4
 buildah run "$ctr" ln -s /usr/lib/libcurl.so.4 /usr/lib/libcurl.so
 
-# set ca bundle
-buildah run "$ctr" curl https://curl.se/ca/cacert.pem -L -o /cacert.pem
+# set ca bundle - download and verify sha256 before installing
+buildah run "$ctr" sh -c 'mkdir -p /tmp/ca && \
+  curl -sL https://curl.se/ca/cacert.pem -o /tmp/ca/cacert.pem && \
+  curl -sL https://curl.se/ca/cacert.pem.sha256 -o /tmp/ca/cacert.pem.sha256 && \
+  cd /tmp/ca && sha256sum -c cacert.pem.sha256 && \
+  mv /tmp/ca/cacert.pem /cacert.pem && \
+  rm -rf /tmp/ca'
 buildah config --env CURL_CA_BUNDLE="/cacert.pem" "$ctr"
 
 # setup curl_group and curl_user though it is not used directly in this image
