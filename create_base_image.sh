@@ -111,4 +111,4 @@ buildah config --label org.opencontainers.image.licenses="MIT" "$ctr"
 buildah config --workingdir /home/curl_user "$ctr"
 
 # commit image
-buildah commit "$ctr" "${image_name}" # --disable-compression false --squash --sign-by --tls-verify
+buildah commit --squash "$ctr" "${image_name}"
