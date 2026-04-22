@@ -5,7 +5,7 @@ container_ids=`buildah ls --format "{{.ContainerID}}"`
 # default settings for official curl images
 debian_base=docker.io/debian
 fedora_base=docker.io/fedora
-base=docker.io/alpine:3.23.3
+base=docker.io/alpine:3.23.4
 arch=""
 compiler="gcc"
 dev_deps="git zsh curl build-base libtool autoconf automake perl openssl libssh2 libssh2-dev libssh2-static nghttp2-dev brotli brotli-dev zstd-dev krb5-dev libpsl-dev python3 python3-dev stunnel nghttp2"

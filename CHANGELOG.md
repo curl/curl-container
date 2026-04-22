@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [8.19.0_2] - 2026-04-2
+### Changed
+- bump to alpine 3.23.4
+
 ## [8.19.0_1] - 2026-04-11
 ### Changed
 - squash images
