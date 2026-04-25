@@ -98,7 +98,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - bump to curl 8.6.0
 - bump to alpine 3.19.1
 
-## [8.5.0-1] - 2023-01-19
+## [8.5.0-1] - 2024-01-19
 ### Changed
 - add libpsl
 - bump to alpine 3.19.0
@@ -116,7 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.3.1] - 2023-09-13
 ### Changed
-- bump to curl 8.3.0
+- bump to curl 8.3.1
 - bump to alpine 3.18.3
 
 ## [8.2.1] - 2023-07-26
