@@ -1,7 +1,6 @@
-import json
 import re
 
-from behave import given, then
+from behave import given
 
 def cleanup_output(data):
     """strip output of ansi esc sequences (eg. color codes)"""
