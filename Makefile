@@ -103,7 +103,7 @@ scan:
 	grype --version
 	grype image.tar
 	# run trivy on image.tar
-	systemctl --user enable --now podman.socket | true
+	systemctl --user enable --now podman.socket || true
 	trivy --version
 	trivy image --input image.tar
 	rm image.tar
