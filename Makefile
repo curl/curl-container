@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := all
 
-container_ids=`buildah ls --format "{{.ContainerID}}"`
+container_ids = $(shell buildah ls --format "{{.ContainerID}}")
 
 # default settings for official curl images
 debian_base=docker.io/debian
