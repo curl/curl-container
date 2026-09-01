@@ -23,12 +23,15 @@ jobs:
     name: 'spellcheck, linters'
     runs-on: ubuntu-latest
     steps:
-      - name: 'install prereqs'
-        run: /home/linuxbrew/.linuxbrew/bin/brew install actionlint zizmor typos-cli
-
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
+      - name: 'install prereqs'
+        run: |
+          /home/linuxbrew/.linuxbrew/bin/brew install actionlint shellcheck zizmor typos-cli
+          python3 -m venv ~/venv
+          ~/venv/bin/pip --disable-pip-version-check --no-input --no-cache-dir install --progress-bar off --prefer-binary -r .github/workflows/requirements.txt
 
       - name: 'zizmor GHA'
         env:
@@ -44,8 +47,40 @@ jobs:
           actionlint --version
           actionlint .github/workflows/*.yml
 
+      - name: 'shellcheck GHA'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          shellcheck --version
+          export SHELLCHECK_OPTS='--exclude=1090,1091 --enable=avoid-nullary-conditions,deprecate-which'
+          git ls-files '.github/workflows/*.yml' | while read -r f; do
+            echo "Verifying ${f}..."
+            {
+              echo '#!/usr/bin/env bash'
+              echo 'set -eu'
+              yq eval '.. | select(has("run") and (.run | type == "!!str")) | .run + "\ntrue\n"' "${f}"
+            } | sed -E 's|\$\{\{ .+ \}\}|GHA_EXPRESSION|g' | shellcheck -
+          done
+
+      - name: 'shellcheck'
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          shellcheck --version
+          git ls-files '*.sh' -z | xargs -0 -r \
+          shellcheck --exclude=1091 --enable=avoid-nullary-conditions,deprecate-which,quote-safe-variables,require-variable-braces --
+
       - name: 'typos'
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           typos --version
           typos
+
+      - name: 'ruff'
+        run: |
+          source ~/venv/bin/activate
+          ruff --version
+          git ls-files '*.py' -z | xargs -0 -r \
+          ruff check --extend-select=B007,B016,C405,C416,COM818,D200,D213,D204,D401,\
+          D415,FURB129,N818,PERF401,PERF403,PIE790,PIE808,PLW0127,Q004,RUF010,SIM101,\
+          SIM110,SIM117,SIM118,TRY400,TRY401,RET503,RET504,UP004,B018,B904,RSE102,RET505,\
+          I001,PERF102,C419 \
+            --ignore=FA100 --
