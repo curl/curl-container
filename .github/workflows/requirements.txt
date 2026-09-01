@@ -1,0 +1,4 @@
+# Copyright (C) Viktor Szakats. See LICENSE.md
+# SPDX-License-Identifier: MIT
+
+ruff==0.15.7
