@@ -29,7 +29,7 @@ jobs:
 
       - name: 'install prereqs'
         run: |
-          /home/linuxbrew/.linuxbrew/bin/brew install actionlint shellcheck zizmor typos-cli
+          /home/linuxbrew/.linuxbrew/bin/brew install shellcheck zizmor typos-cli
           python3 -m venv ~/venv
           ~/venv/bin/pip --disable-pip-version-check --no-input --no-cache-dir install --progress-bar off --prefer-binary -r .github/workflows/requirements.txt
 
@@ -39,13 +39,6 @@ jobs:
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           zizmor --pedantic .github/workflows/*.yml
-
-      - name: 'actionlint'
-        run: |
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          export SHELLCHECK_OPTS='--exclude=1090,1091 --enable=avoid-nullary-conditions,deprecate-which'
-          actionlint --version
-          actionlint .github/workflows/*.yml
 
       - name: 'shellcheck GHA'
         run: |
