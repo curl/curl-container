@@ -12,6 +12,11 @@ concurrency:
   cancel-in-progress: true
 
 permissions: {}
+cache-mode: none
+
+env:
+  DO_NOT_TRACK: '1'
+  HOMEBREW_NO_INSTALL_CLEANUP: '1'
 
 jobs:
   build_master:

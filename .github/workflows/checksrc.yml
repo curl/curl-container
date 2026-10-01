@@ -17,6 +17,11 @@ concurrency:
   cancel-in-progress: true
 
 permissions: {}
+cache-mode: none
+
+env:
+  DO_NOT_TRACK: '1'
+  HOMEBREW_NO_INSTALL_CLEANUP: '1'
 
 jobs:
   linters:
@@ -51,7 +56,7 @@ jobs:
               echo '#!/usr/bin/env bash'
               echo 'set -eu'
               yq eval '.. | select(has("run") and (.run | type == "!!str")) | .run + "\ntrue\n"' "${f}"
-            } | sed -E 's|\$\{\{ .+ \}\}|GHA_EXPRESSION|g' | shellcheck -
+            } | shellcheck -
           done
 
       - name: 'shellcheck'
