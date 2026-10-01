@@ -22,7 +22,7 @@ jobs:
   build_dev_master:
     if: ${{ github.repository_owner == 'curl' || github.event_name != 'schedule' }}
     name: 'build_dev_master'
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     environment: production
     permissions:
       packages: write  # To create/update container on ghcr.io

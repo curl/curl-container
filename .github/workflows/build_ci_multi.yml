@@ -20,7 +20,7 @@ env:
 jobs:
   verify_secrets_ghcr:
     name: 'Verify credentials (ghcr.io)'
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     steps:
       - name: 'versions'
         run: podman --version; docker --version
@@ -40,7 +40,7 @@ jobs:
 
   verify_secrets_docker:
     name: 'Verify credentials (docker.io)'
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     environment: registry
     if: ${{ github.secret_source == 'Actions' }}
     steps:
@@ -62,7 +62,7 @@ jobs:
 
   verify_secrets_quay:
     name: 'Verify credentials (quay.io)'
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     environment: registry
     if: ${{ github.secret_source == 'Actions' }}
     steps:
@@ -84,7 +84,7 @@ jobs:
 
   master:
     name: 'Test build: master'
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     steps:
       - name: 'install dev deps'
         run: |
@@ -141,7 +141,7 @@ jobs:
 
   multi:
     name: 'Test build: multi'
-    runs-on: 'ubuntu-latest'
+    runs-on: ubuntu-latest
     steps:
       - name: 'install dev deps'
         run: |
