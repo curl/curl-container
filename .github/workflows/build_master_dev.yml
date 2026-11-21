@@ -22,7 +22,7 @@ jobs:
   build_dev_master:
     if: ${{ github.repository_owner == 'curl' || github.event_name != 'schedule' }}
     name: 'build_dev_master'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     environment: production
     permissions:
       packages: write  # To create/update container on ghcr.io
@@ -32,7 +32,7 @@ jobs:
           sudo find /etc/apt/sources.list.d -type f -not -name 'ubuntu.sources' -delete -print
           sudo apt-get -o Dpkg::Use-Pty=0 update
           sudo apt-get -o Dpkg::Use-Pty=0 install \
-            qemu-user-static buildah less git make podman clamav clamav-freshclam
+            qemu-user-binfmt buildah less git make podman clamav clamav-freshclam
 
       - name: 'install prereqs'
         run: /home/linuxbrew/.linuxbrew/bin/brew install cosign grype trivy
