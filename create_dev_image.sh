@@ -14,6 +14,9 @@
 
 echo "####### creating curl dev image."
 
+# shellcheck source=labels.sh
+source "$(dirname "${BASH_SOURCE[0]}")/labels.sh"
+
 # get invoke opts
 platform=${1}
 dist=${2}
@@ -33,10 +36,6 @@ else
   echo "creating ..."
   bdr=$(buildah from "${dist}")
 fi
-
-# label/env
-buildah config --label maintainer="James Fuller <jim.fuller@webcomposite.com>" "$bdr"
-buildah config --label name="${image_name}" "$bdr"
 
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
@@ -96,9 +95,7 @@ fi
 buildah run "$bdr" make "-j${parallel}" install DESTDIR="/build"
 
 # label image
-buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" "$bdr"
-buildah config --label org.opencontainers.image.description="minimal dev image for curl" "$bdr"
-buildah config --label org.opencontainers.image.licenses="MIT" "$bdr"
+set_oci_labels "$bdr" "curl-dev" "minimal dev image for curl" "${release_tag:-${branch_or_tag}}" base
 
 # commit image
 buildah commit "$bdr" "${image_name}" # --disable-compression false --squash --sign-by --tls-verify
