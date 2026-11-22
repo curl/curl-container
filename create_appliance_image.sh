@@ -12,6 +12,9 @@
 
 echo "####### creating curl image."
 
+# shellcheck source=labels.sh
+source "$(dirname "${BASH_SOURCE[0]}")/labels.sh"
+
 # get invoke opts
 platform=${1}
 dist=${2}
@@ -26,19 +29,12 @@ else
   ctr=$(buildah from "${dist}")
 fi
 
-# label/env
-buildah config --label maintainer="James Fuller <jim.fuller@webcomposite.com>" "$ctr"
-buildah config --label name="${image_name}" "$ctr"
-buildah config --label version="${release_tag}" "$ctr"
-buildah config --label docker.cmd="podman run -it quay.io/curl/${image_name}:${release_tag}" "$ctr"
-
 # assumes base image has setup curl_user
 buildah config --user curl_user "$ctr"
 
-# label image
-buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" "$ctr"
-buildah config --label org.opencontainers.image.description="minimal image for curl" "$ctr"
-buildah config --label org.opencontainers.image.licenses="MIT" "$ctr"
+# label image; base.name/base.digest are inherited from curl-base, so they
+# name the upstream distro image rather than the local curl-base build
+set_oci_labels "$ctr" "curl" "minimal image for curl" "${release_tag}"
 
 # set working directory
 buildah config --workingdir /home/curl_user "$ctr"

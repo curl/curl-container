@@ -14,6 +14,9 @@
 
 echo "####### creating curl base image."
 
+# shellcheck source=labels.sh
+source "$(dirname "${BASH_SOURCE[0]}")/labels.sh"
+
 # set default (will rarely change)
 SO_NAME="libcurl.so.4.8.0"
 
@@ -34,12 +37,6 @@ else
   ctr=$(buildah from "${dist}")
 fi
 ctrmnt=$(buildah mount "$ctr")
-
-# label/env
-buildah config --label maintainer="James Fuller <jim.fuller@webcomposite.com>" "$ctr"
-buildah config --label name="${image_name}" "$ctr"
-buildah config --label version="${release_tag}" "$ctr"
-buildah config --label docker.cmd="podman run -it quay.io/curl/${image_name}:${release_tag}" "$ctr"
 
 # determine dist package manager
 if [[ "$dist" =~ .*"alpine".* ]]; then
@@ -103,9 +100,7 @@ buildah copy --chmod 755 --chown curl_user:curl_group "$ctr" etc/entrypoint.sh /
 buildah config --entrypoint '["/entrypoint.sh"]' "$ctr"
 
 # label image
-buildah config --label org.opencontainers.image.source="https://github.com/curl/curl-container" "$ctr"
-buildah config --label org.opencontainers.image.description="minimal base image for curl" "$ctr"
-buildah config --label org.opencontainers.image.licenses="MIT" "$ctr"
+set_oci_labels "$ctr" "curl-base" "minimal base image for curl" "${release_tag}" base
 
 # set working directory
 buildah config --workingdir /home/curl_user "$ctr"
